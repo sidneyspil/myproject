@@ -1,0 +1,43 @@
+---
+title: "My Dataset"
+output: html_document
+date: "2024-09-26"
+---
+
+```{r}
+library(car)
+library(dplyr) #recode variables
+library(tidyr)
+library(ggplot2)
+library(psych)
+library(bruceR)
+library(haven) #load CSV
+
+#install.packages("car")
+```
+
+# Load dataset
+```{r}
+# Set working directory
+setwd("C:/Users/sidne/OneDrive/Desktop/PSY329")
+
+# Read the TSV file
+data <- read.table("35525-0001-Data.tsv", sep = "\t", header = TRUE, fill = TRUE, quote = "")
+
+# Write the data to a CSV file
+write.csv(data, "35525-0001-Data.csv", row.names = FALSE)
+
+#open file
+data <- read.csv("C:/Users/sidne/OneDrive/Desktop/PSY329/35525-0001-Data.csv")
+
+data$GENDER<-recode(data$GENDER, '1' = 'Male', '2' = 'Female')
+data$ETHNIC<-recode(data$ETHNIC, '1' ='Black', '2' = 'Latino', '0'='White')
+
+new_data <- data %>%
+  select(RID,GENDER,ETHNIC,PERWELLB,PWB_ACC,PWB_PIL,PWB_EM,PWB_PRO,PWB_PG,PWB_AUT,ESTEEM,COLSE,COLSE_ME, COLSE_PR, COLSE_PU, COLSE_ID, SOCWELLB, SWB_COH, SWB_INT, SWB_ACC, SWB_CON, SWB_ACT)
+
+write.csv(new_data, "C:/Users/sidne/OneDrive/Desktop/PSY329/new_data.csv", row.names = FALSE)
+
+```
+
+
