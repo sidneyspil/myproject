@@ -1,6 +1,6 @@
 ---
 title: "My Dataset"
-output: html_document
+output: "github_document"
 date: "2024-09-26"
 ---
 ```{r}
@@ -13,12 +13,13 @@ install.packages("nortest")
 ```
 
 ```{r}
+install.packages("dplyr")
 library(car)
 library(dplyr) #recode variables
-library(tidyr)
+#library(tidyr)
 library(ggplot2)
-library(psych)
-library(bruceR)
+#library(psych)
+#library(bruceR)
 library(haven) #load CSV
 
 install.packages("nortest")
