@@ -29,10 +29,10 @@ library(nortest)
 Reading dataset 
 ```{r}
 # Set working directory
-setwd("C:/Users/sidne/OneDrive/Desktop/PSY329")
+#setwd("C:/Users/sidne/OneDrive/Documents/GitHub/myproject")
 
 # Read the TSV file
-data <- read.table("38964-0001-Data.tsv", sep = "\t", header = TRUE, fill = TRUE, quote = "")
+data <- read.table("C:/Users/sidne/OneDrive/Desktop/PSY329/38964-0001-Data.tsv", sep = "\t", header = TRUE, fill = TRUE, quote = "")
 
 # Write the data to a CSV file
 write.csv(data, "Excel-Data.csv", row.names = FALSE)
