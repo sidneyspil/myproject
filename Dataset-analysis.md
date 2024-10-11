@@ -5,32 +5,10 @@ My Dataset
 ``` r
 # Set a CRAN mirror
 options(repos = c(CRAN = "https://cran.rstudio.com/"))
-
-# Install the nortest package
-install.packages("nortest")
 ```
 
-    ## Installing package into 'C:/Users/sidne/AppData/Local/R/win-library/4.4'
-    ## (as 'lib' is unspecified)
-
-    ## package 'nortest' successfully unpacked and MD5 sums checked
-    ## 
-    ## The downloaded binary packages are in
-    ##  C:\Users\sidne\AppData\Local\Temp\RtmpSEudda\downloaded_packages
-
 ``` r
-install.packages("dplyr")
-```
-
-    ## Installing package into 'C:/Users/sidne/AppData/Local/R/win-library/4.4'
-    ## (as 'lib' is unspecified)
-
-    ## package 'dplyr' successfully unpacked and MD5 sums checked
-    ## 
-    ## The downloaded binary packages are in
-    ##  C:\Users\sidne\AppData\Local\Temp\RtmpSEudda\downloaded_packages
-
-``` r
+#install.packages("dplyr")
 library(car)
 ```
 
@@ -56,25 +34,15 @@ library(dplyr) #recode variables
     ##     intersect, setdiff, setequal, union
 
 ``` r
-#library(tidyr)
+library(tidyr)
 library(ggplot2)
 #library(psych)
 #library(bruceR)
 library(haven) #load CSV
 
-install.packages("nortest")
-```
+#install.packages("nortest")
 
-    ## Installing package into 'C:/Users/sidne/AppData/Local/R/win-library/4.4'
-    ## (as 'lib' is unspecified)
-
-    ## package 'nortest' successfully unpacked and MD5 sums checked
-    ## 
-    ## The downloaded binary packages are in
-    ##  C:\Users\sidne\AppData\Local\Temp\RtmpSEudda\downloaded_packages
-
-``` r
-library(nortest)
+#ibrary(nortest)
 #install.packages("car")
 ```
 
@@ -102,9 +70,7 @@ clean_data <- data %>%
 
 clean_data$SEX<-recode(data$SEX, '1' = 'Male', '2' = 'Female', '3'='Other')
 
-#clean_data$RACEREC<-recode(data$RACEREC, '1'='White','2'='Black','3'='Indigenous American','4'='Hispanic','5'='Asian','6'= 'Other', '98'='Unknown') I don't think I am going to use race
-
-clean_data$HOUSE_INCOME<-recode(data$HHINC, '1' = '<10K', '2' = '10K-24K', '3'='25k-39k','4'='40k-49k','5'='50K-59K','6'='60K-74K','7'='75K-84K','8'='85K-99K','9'='100K-124K','10'='125K-149K','11'='150K-199K','12'='200k+')
+clean_data$HOUSE_INCOME<-recode(data$HHINC, '1' = 'Low', '2' = 'Low', '3'='Low','4'='Low','5'='Low','6'='Middle','7'='Middle','8'='Middle','9'='Middle','10'='Middle','11'='High','12'='High')
 ```
 
     ## Warning: Unreplaced values treated as NA as `.x` is not compatible.
@@ -125,71 +91,151 @@ clean_data <- clean_data %>%
 clean_data <- clean_data %>%
   mutate(Life_satisfaction = ifelse(Life_satisfaction > 5, NA, Life_satisfaction))
 
+clean_data$HAPPY_REV <- 5 - clean_data$HAPPY #reverse code happy so higher number = happier
+
+clean_data <- clean_data %>%
+  select(SEX,HOUSE_INCOME,HAPPY_meaning, HAPPY_REV,Life_satisfaction, SAT1,SAT2,SAT3,SAT4,SAT5,Lonely, LONELY_A,LONELY_B,LONELY_C)
+
+clean_data<- drop_na(clean_data)
+
+
 write.csv(clean_data, "C:/Users/sidne/OneDrive/Desktop/PSY329/clean_data.csv", row.names = FALSE)
 ```
 
-Checking normality
+Normality of Lonely
 
 ``` r
-ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.1) + theme_classic()
+ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.5) + facet_wrap(~SEX)+theme_classic() #between SEX
 ```
-
-    ## Warning: Removed 13 rows containing non-finite outside the scale range
-    ## (`stat_bin()`).
 
 ![](Dataset-analysis_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
-ggplot(clean_data, aes(x = Life_satisfaction)) + geom_histogram(binwidth = 0.1) + theme_classic()
+ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic() #between INCOME
 ```
-
-    ## Warning: Removed 7 rows containing non-finite outside the scale range
-    ## (`stat_bin()`).
 
 ![](Dataset-analysis_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
 
 ``` r
-ggplot(clean_data, aes(x = HAPPY)) + geom_histogram(binwidth = 0.1) + theme_classic()
+clean_data %>%
+  group_by(SEX) %>% 
+  summarize(W = shapiro.test(Lonely)$statistic, p_value = shapiro.test(Lonely)$p.value)
 ```
 
-![](Dataset-analysis_files/figure-gfm/unnamed-chunk-5-3.png)<!-- -->
+    ## # A tibble: 3 × 3
+    ##   SEX        W  p_value
+    ##   <chr>  <dbl>    <dbl>
+    ## 1 Female 0.920 9.36e-41
+    ## 2 Male   0.896 8.63e-44
+    ## 3 Other  0.815 1.60e- 4
 
 ``` r
-# Anderson-Darling test for Lonely
-ad.test(clean_data$Lonely)
+clean_data %>%
+  group_by(HOUSE_INCOME) %>% 
+  summarize(W = shapiro.test(Lonely)$statistic, p_value = shapiro.test(Lonely)$p.value)
 ```
 
-    ## 
-    ##  Anderson-Darling normality test
-    ## 
-    ## data:  clean_data$Lonely
-    ## A = 196.22, p-value < 2.2e-16
+    ## # A tibble: 3 × 3
+    ##   HOUSE_INCOME     W  p_value
+    ##   <chr>        <dbl>    <dbl>
+    ## 1 High         0.837 8.98e-19
+    ## 2 Low          0.920 1.68e-45
+    ## 3 Middle       0.883 4.48e-36
+
+Normality of Life satisfaction
 
 ``` r
-# Anderson-Darling test for Life_satisfaction
-ad.test(clean_data$Life_satisfaction)
+ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.5) + facet_wrap(~SEX)+theme_classic()
 ```
 
-    ## 
-    ##  Anderson-Darling normality test
-    ## 
-    ## data:  clean_data$Life_satisfaction
-    ## A = 35.787, p-value < 2.2e-16
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
-# Anderson-Darling test for Happiness
-ad.test(clean_data$HAPPY)
+ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic()
 ```
 
-    ## 
-    ##  Anderson-Darling normality test
-    ## 
-    ## data:  clean_data$HAPPY
-    ## A = 623.14, p-value < 2.2e-16
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
 
 ``` r
-#all 3 variables show a non normal distribution as shown in the ggplot and the Anderson-darling test since p<0.05 and a large A value
+clean_data %>%
+  group_by(SEX) %>% 
+  summarize(W = shapiro.test(Life_satisfaction)$statistic, p_value = shapiro.test(Life_satisfaction)$p.value)
 ```
+
+    ## # A tibble: 3 × 3
+    ##   SEX        W  p_value
+    ##   <chr>  <dbl>    <dbl>
+    ## 1 Female 0.981 2.63e-22
+    ## 2 Male   0.978 4.91e-23
+    ## 3 Other  0.931 5.97e- 2
+
+``` r
+clean_data %>%
+  group_by(HOUSE_INCOME) %>% 
+  summarize(W = shapiro.test(Life_satisfaction)$statistic, p_value = shapiro.test(Life_satisfaction)$p.value)
+```
+
+    ## # A tibble: 3 × 3
+    ##   HOUSE_INCOME     W  p_value
+    ##   <chr>        <dbl>    <dbl>
+    ## 1 High         0.946 4.06e-10
+    ## 2 Low          0.983 4.79e-24
+    ## 3 Middle       0.967 8.39e-21
+
+Normality of Happiness
+
+``` r
+ggplot(clean_data, aes(x = HAPPY_REV)) + geom_histogram(binwidth = 1) + facet_wrap(~SEX)+theme_classic()
+```
+
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+``` r
+ggplot(clean_data, aes(x = HAPPY_REV)) + geom_histogram(binwidth = 1) + facet_wrap(~HOUSE_INCOME)+theme_classic()
+```
+
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
+
+``` r
+clean_data %>%
+  group_by(SEX) %>% 
+  summarize(W = shapiro.test(HAPPY_REV)$statistic, p_value = shapiro.test(HAPPY_REV)$p.value)
+```
+
+    ## # A tibble: 3 × 3
+    ##   SEX        W  p_value
+    ##   <chr>  <dbl>    <dbl>
+    ## 1 Female 0.817 2.66e-54
+    ## 2 Male   0.826 2.85e-52
+    ## 3 Other  0.866 1.66e- 3
+
+``` r
+clean_data %>%
+  group_by(HOUSE_INCOME) %>% 
+  summarize(W = shapiro.test(HAPPY_REV)$statistic, p_value = shapiro.test(HAPPY_REV)$p.value)
+```
+
+    ## # A tibble: 3 × 3
+    ##   HOUSE_INCOME     W  p_value
+    ##   <chr>        <dbl>    <dbl>
+    ## 1 High         0.750 7.34e-23
+    ## 2 Low          0.830 1.63e-58
+    ## 3 Middle       0.793 1.73e-44
+
+Variance of Lonely
+
+``` r
+clean_data %>%
+  group_by(SEX) %>%
+  summarize(variacne = var(Lonely))
+```
+
+    ## # A tibble: 3 × 2
+    ##   SEX    variacne
+    ##   <chr>     <dbl>
+    ## 1 Female    0.398
+    ## 2 Male      0.422
+    ## 3 Other     0.496
 
 ``` r
 leveneTest(Lonely~SEX, clean_data)
@@ -200,25 +246,24 @@ leveneTest(Lonely~SEX, clean_data)
 
     ## Levene's Test for Homogeneity of Variance (center = median)
     ##         Df F value Pr(>F)
-    ## group    2  1.7483 0.1741
-    ##       7628
+    ## group    2  1.2168 0.2962
+    ##       7308
 
 ``` r
-leveneTest(Life_satisfaction~SEX, clean_data)
+clean_data %>%
+  group_by(HOUSE_INCOME) %>%
+  summarize(variacne = var(Lonely))
 ```
 
-    ## Warning in leveneTest.default(y = y, group = group, ...): group coerced to
-    ## factor.
-
-    ## Levene's Test for Homogeneity of Variance (center = median)
-    ##         Df F value  Pr(>F)  
-    ## group    2  2.4984 0.08228 .
-    ##       7634                  
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## # A tibble: 3 × 2
+    ##   HOUSE_INCOME variacne
+    ##   <chr>           <dbl>
+    ## 1 High            0.339
+    ## 2 Low             0.416
+    ## 3 Middle          0.369
 
 ``` r
-leveneTest(HAPPY~SEX, clean_data)
+leveneTest(Lonely~HOUSE_INCOME, clean_data)
 ```
 
     ## Warning in leveneTest.default(y = y, group = group, ...): group coerced to
@@ -226,50 +271,11 @@ leveneTest(HAPPY~SEX, clean_data)
 
     ## Levene's Test for Homogeneity of Variance (center = median)
     ##         Df F value    Pr(>F)    
-    ## group    2  6.9462 0.0009684 ***
-    ##       7641                      
+    ## group    2  9.9273 4.949e-05 ***
+    ##       7308                      
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-``` r
-model <- lm(Life_satisfaction ~ SEX, data = clean_data)
-plot(residuals(model))
-```
+\#leveneTest(Life_satisfaction~SEX, clean_data)
 
-![](Dataset-analysis_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
-
-``` r
-install.packages("lmtest")
-```
-
-    ## Installing package into 'C:/Users/sidne/AppData/Local/R/win-library/4.4'
-    ## (as 'lib' is unspecified)
-
-    ## package 'lmtest' successfully unpacked and MD5 sums checked
-    ## 
-    ## The downloaded binary packages are in
-    ##  C:\Users\sidne\AppData\Local\Temp\RtmpSEudda\downloaded_packages
-
-``` r
-library(lmtest)
-```
-
-    ## Loading required package: zoo
-
-    ## 
-    ## Attaching package: 'zoo'
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     as.Date, as.Date.numeric
-
-``` r
-dwtest(model)
-```
-
-    ## 
-    ##  Durbin-Watson test
-    ## 
-    ## data:  model
-    ## DW = 1.999, p-value = 0.4831
-    ## alternative hypothesis: true autocorrelation is greater than 0
+\#leveneTest(HAPPY_REV~SEX, clean_data)

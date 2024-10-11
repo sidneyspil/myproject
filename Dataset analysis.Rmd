@@ -7,24 +7,21 @@ date: "2024-09-26"
 # Set a CRAN mirror
 options(repos = c(CRAN = "https://cran.rstudio.com/"))
 
-# Install the nortest package
-install.packages("nortest")
-
 ```
 
 ```{r}
-install.packages("dplyr")
+#install.packages("dplyr")
 library(car)
 library(dplyr) #recode variables
-#library(tidyr)
+library(tidyr)
 library(ggplot2)
 #library(psych)
 #library(bruceR)
 library(haven) #load CSV
 
-install.packages("nortest")
+#install.packages("nortest")
 
-library(nortest)
+#ibrary(nortest)
 #install.packages("car")
 ```
 Reading dataset 
@@ -50,9 +47,7 @@ clean_data <- data %>%
 
 clean_data$SEX<-recode(data$SEX, '1' = 'Male', '2' = 'Female', '3'='Other')
 
-#clean_data$RACEREC<-recode(data$RACEREC, '1'='White','2'='Black','3'='Indigenous American','4'='Hispanic','5'='Asian','6'= 'Other', '98'='Unknown') I don't think I am going to use race
-
-clean_data$HOUSE_INCOME<-recode(data$HHINC, '1' = '<10K', '2' = '10K-24K', '3'='25k-39k','4'='40k-49k','5'='50K-59K','6'='60K-74K','7'='75K-84K','8'='85K-99K','9'='100K-124K','10'='125K-149K','11'='150K-199K','12'='200k+')
+clean_data$HOUSE_INCOME<-recode(data$HHINC, '1' = 'Low', '2' = 'Low', '3'='Low','4'='Low','5'='Low','6'='Middle','7'='Middle','8'='Middle','9'='Middle','10'='Middle','11'='High','12'='High')
 
 clean_data$HAPPY_meaning<-recode(data$HAPPY, '1' = 'Very happy', '2' = 'Rather happy', '3'='Not very happy','4'='Not at all happy')
 
@@ -68,50 +63,80 @@ clean_data <- clean_data %>%
 clean_data <- clean_data %>%
   mutate(Life_satisfaction = ifelse(Life_satisfaction > 5, NA, Life_satisfaction))
 
+clean_data$HAPPY_REV <- 5 - clean_data$HAPPY #reverse code happy so higher number = happier
+
+clean_data <- clean_data %>%
+  select(SEX,HOUSE_INCOME,HAPPY_meaning, HAPPY_REV,Life_satisfaction, SAT1,SAT2,SAT3,SAT4,SAT5,Lonely, LONELY_A,LONELY_B,LONELY_C)
+
+clean_data<- drop_na(clean_data)
+
+
 write.csv(clean_data, "C:/Users/sidne/OneDrive/Desktop/PSY329/clean_data.csv", row.names = FALSE)
 
 ```
 
-Checking normality
+Normality of Lonely
 ```{r}
 
-ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.1) + theme_classic()
+ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.5) + facet_wrap(~SEX)+theme_classic() #between SEX
 
-ggplot(clean_data, aes(x = Life_satisfaction)) + geom_histogram(binwidth = 0.1) + theme_classic()
+ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic() #between INCOME
 
-ggplot(clean_data, aes(x = HAPPY)) + geom_histogram(binwidth = 0.1) + theme_classic()
+clean_data %>%
+  group_by(SEX) %>% 
+  summarize(W = shapiro.test(Lonely)$statistic, p_value = shapiro.test(Lonely)$p.value)
 
-
-
-# Anderson-Darling test for Lonely
-ad.test(clean_data$Lonely)
-
-# Anderson-Darling test for Life_satisfaction
-ad.test(clean_data$Life_satisfaction)
-
-# Anderson-Darling test for Happiness
-ad.test(clean_data$HAPPY)
-
-#all 3 variables show a non normal distribution as shown in the ggplot and the Anderson-darling test since p<0.05 and a large A value
+clean_data %>%
+  group_by(HOUSE_INCOME) %>% 
+  summarize(W = shapiro.test(Lonely)$statistic, p_value = shapiro.test(Lonely)$p.value)
 ```
+
+Normality of Life satisfaction
 ```{r}
+ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.5) + facet_wrap(~SEX)+theme_classic()
+
+ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic()
+
+clean_data %>%
+  group_by(SEX) %>% 
+  summarize(W = shapiro.test(Life_satisfaction)$statistic, p_value = shapiro.test(Life_satisfaction)$p.value)
+
+clean_data %>%
+  group_by(HOUSE_INCOME) %>% 
+  summarize(W = shapiro.test(Life_satisfaction)$statistic, p_value = shapiro.test(Life_satisfaction)$p.value)
+```
+
+Normality of Happiness
+```{r}
+ggplot(clean_data, aes(x = HAPPY_REV)) + geom_histogram(binwidth = 1) + facet_wrap(~SEX)+theme_classic()
+
+ggplot(clean_data, aes(x = HAPPY_REV)) + geom_histogram(binwidth = 1) + facet_wrap(~HOUSE_INCOME)+theme_classic()
+
+clean_data %>%
+  group_by(SEX) %>% 
+  summarize(W = shapiro.test(HAPPY_REV)$statistic, p_value = shapiro.test(HAPPY_REV)$p.value)
+
+clean_data %>%
+  group_by(HOUSE_INCOME) %>% 
+  summarize(W = shapiro.test(HAPPY_REV)$statistic, p_value = shapiro.test(HAPPY_REV)$p.value)
+
+```
+Variance of Lonely
+```{r}
+clean_data %>%
+  group_by(SEX) %>%
+  summarize(variacne = var(Lonely))
+
 leveneTest(Lonely~SEX, clean_data)
 
-leveneTest(Life_satisfaction~SEX, clean_data)
+clean_data %>%
+  group_by(HOUSE_INCOME) %>%
+  summarize(variacne = var(Lonely))
 
-leveneTest(HAPPY~SEX, clean_data)
+leveneTest(Lonely~HOUSE_INCOME, clean_data)
 ```
+#leveneTest(Life_satisfaction~SEX, clean_data)
 
+#leveneTest(HAPPY_REV~SEX, clean_data)
 
-
-```{r}
-model <- lm(Life_satisfaction ~ SEX, data = clean_data)
-plot(residuals(model))
-
-install.packages("lmtest")
-library(lmtest)
-dwtest(model)
-
-
-```
 
