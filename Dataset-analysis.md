@@ -276,6 +276,115 @@ leveneTest(Lonely~HOUSE_INCOME, clean_data)
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-\#leveneTest(Life_satisfaction~SEX, clean_data)
+Variance of Life satisfaction
 
-\#leveneTest(HAPPY_REV~SEX, clean_data)
+``` r
+clean_data %>%
+  group_by(SEX) %>%
+  summarize(variacne = var(Life_satisfaction))
+```
+
+    ## # A tibble: 3 × 2
+    ##   SEX    variacne
+    ##   <chr>     <dbl>
+    ## 1 Female    0.953
+    ## 2 Male      1.02 
+    ## 3 Other     1.39
+
+``` r
+leveneTest(Life_satisfaction~SEX, clean_data)
+```
+
+    ## Warning in leveneTest.default(y = y, group = group, ...): group coerced to
+    ## factor.
+
+    ## Levene's Test for Homogeneity of Variance (center = median)
+    ##         Df F value Pr(>F)  
+    ## group    2  2.9108 0.0545 .
+    ##       7308                 
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+``` r
+clean_data %>%
+  group_by(HOUSE_INCOME) %>%
+  summarize(variacne = var(Life_satisfaction))
+```
+
+    ## # A tibble: 3 × 2
+    ##   HOUSE_INCOME variacne
+    ##   <chr>           <dbl>
+    ## 1 High            0.796
+    ## 2 Low             0.960
+    ## 3 Middle          0.897
+
+``` r
+leveneTest(Life_satisfaction~HOUSE_INCOME, clean_data)
+```
+
+    ## Warning in leveneTest.default(y = y, group = group, ...): group coerced to
+    ## factor.
+
+    ## Levene's Test for Homogeneity of Variance (center = median)
+    ##         Df F value    Pr(>F)    
+    ## group    2   9.328 8.996e-05 ***
+    ##       7308                      
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Variance of Happiness
+
+``` r
+clean_data %>%
+  group_by(SEX) %>%
+  summarize(variacne = var(HAPPY_REV))
+```
+
+    ## # A tibble: 3 × 2
+    ##   SEX    variacne
+    ##   <chr>     <dbl>
+    ## 1 Female    0.515
+    ## 2 Male      0.549
+    ## 3 Other     0.734
+
+``` r
+leveneTest(HAPPY_REV~SEX, clean_data)
+```
+
+    ## Warning in leveneTest.default(y = y, group = group, ...): group coerced to
+    ## factor.
+
+    ## Levene's Test for Homogeneity of Variance (center = median)
+    ##         Df F value   Pr(>F)   
+    ## group    2  6.1011 0.002252 **
+    ##       7308                    
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+``` r
+clean_data %>%
+  group_by(HAPPY_REV) %>%
+  summarize(variacne = var(Life_satisfaction))
+```
+
+    ## # A tibble: 4 × 2
+    ##   HAPPY_REV variacne
+    ##       <dbl>    <dbl>
+    ## 1         1    0.465
+    ## 2         2    0.541
+    ## 3         3    0.616
+    ## 4         4    0.674
+
+``` r
+leveneTest(HAPPY_REV~HOUSE_INCOME, clean_data)
+```
+
+    ## Warning in leveneTest.default(y = y, group = group, ...): group coerced to
+    ## factor.
+
+    ## Levene's Test for Homogeneity of Variance (center = median)
+    ##         Df F value    Pr(>F)    
+    ## group    2    11.6 9.341e-06 ***
+    ##       7308                      
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1

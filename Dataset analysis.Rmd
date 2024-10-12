@@ -135,8 +135,32 @@ clean_data %>%
 
 leveneTest(Lonely~HOUSE_INCOME, clean_data)
 ```
-#leveneTest(Life_satisfaction~SEX, clean_data)
+Variance of Life satisfaction
+```{r}
+clean_data %>%
+  group_by(SEX) %>%
+  summarize(variacne = var(Life_satisfaction))
 
-#leveneTest(HAPPY_REV~SEX, clean_data)
+leveneTest(Life_satisfaction~SEX, clean_data)
 
+clean_data %>%
+  group_by(HOUSE_INCOME) %>%
+  summarize(variacne = var(Life_satisfaction))
 
+leveneTest(Life_satisfaction~HOUSE_INCOME, clean_data)
+
+```
+Variance of Happiness
+```{r}
+clean_data %>%
+  group_by(SEX) %>%
+  summarize(variacne = var(HAPPY_REV))
+
+leveneTest(HAPPY_REV~SEX, clean_data)
+
+clean_data %>%
+  group_by(HAPPY_REV) %>%
+  summarize(variacne = var(Life_satisfaction))
+
+leveneTest(HAPPY_REV~HOUSE_INCOME, clean_data)
+```
