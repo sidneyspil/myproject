@@ -145,13 +145,13 @@ clean_data %>%
 Normality of Life satisfaction
 
 ``` r
-ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.5) + facet_wrap(~SEX)+theme_classic()
+ggplot(clean_data, aes(x = Life_satisfaction)) + geom_histogram(binwidth = 0.5) + facet_wrap(~SEX)+theme_classic()
 ```
 
 ![](Dataset-analysis_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
-ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic()
+ggplot(clean_data, aes(x = Life_satisfaction)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic()
 ```
 
 ![](Dataset-analysis_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
