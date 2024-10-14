@@ -388,3 +388,133 @@ leveneTest(HAPPY_REV~HOUSE_INCOME, clean_data)
     ##       7308                      
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Data transformations
+
+``` r
+clean_data$Lonely_log <- sqrt(clean_data$Lonely)
+
+clean_data$HappyREV_log <- sqrt(clean_data$HAPPY_REV)
+
+clean_data$Lifesat_log <- sqrt(clean_data$Life_satisfaction)
+```
+
+Normality of Lonely_Log
+
+``` r
+ggplot(clean_data, aes(x = Lonely_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~SEX)+theme_classic() #between SEX
+```
+
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+``` r
+ggplot(clean_data, aes(x = Lonely_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic() #between INCOME
+```
+
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-12-2.png)<!-- -->
+
+``` r
+clean_data %>%
+  group_by(SEX) %>% 
+  summarize(W = shapiro.test(Lonely_log)$statistic, p_value = shapiro.test(Lonely_log)$p.value)
+```
+
+    ## # A tibble: 3 × 3
+    ##   SEX        W  p_value
+    ##   <chr>  <dbl>    <dbl>
+    ## 1 Female 0.921 1.44e-40
+    ## 2 Male   0.901 5.25e-43
+    ## 3 Other  0.790 5.55e- 5
+
+``` r
+clean_data %>%
+  group_by(HOUSE_INCOME) %>% 
+  summarize(W = shapiro.test(Lonely_log)$statistic, p_value = shapiro.test(Lonely_log)$p.value)
+```
+
+    ## # A tibble: 3 × 3
+    ##   HOUSE_INCOME     W  p_value
+    ##   <chr>        <dbl>    <dbl>
+    ## 1 High         0.849 4.57e-18
+    ## 2 Low          0.920 1.92e-45
+    ## 3 Middle       0.891 3.34e-35
+
+Normality of Lifesat_Log
+
+``` r
+ggplot(clean_data, aes(x = Lifesat_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~SEX)+theme_classic() #between SEX
+```
+
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+``` r
+ggplot(clean_data, aes(x = Lifesat_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic() #between INCOME
+```
+
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-13-2.png)<!-- -->
+
+``` r
+clean_data %>%
+  group_by(SEX) %>% 
+  summarize(W = shapiro.test(Lifesat_log)$statistic, p_value = shapiro.test(Lifesat_log)$p.value)
+```
+
+    ## # A tibble: 3 × 3
+    ##   SEX        W  p_value
+    ##   <chr>  <dbl>    <dbl>
+    ## 1 Female 0.963 6.87e-30
+    ## 2 Male   0.959 2.08e-30
+    ## 3 Other  0.935 7.47e- 2
+
+``` r
+clean_data %>%
+  group_by(HOUSE_INCOME) %>% 
+  summarize(W = shapiro.test(Lifesat_log)$statistic, p_value = shapiro.test(Lifesat_log)$p.value)
+```
+
+    ## # A tibble: 3 × 3
+    ##   HOUSE_INCOME     W  p_value
+    ##   <chr>        <dbl>    <dbl>
+    ## 1 High         0.904 2.98e-14
+    ## 2 Low          0.970 6.42e-31
+    ## 3 Middle       0.938 5.86e-28
+
+Normality of Happrev_log
+
+``` r
+ggplot(clean_data, aes(x = HappyREV_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~SEX)+theme_classic() #between SEX
+```
+
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+``` r
+ggplot(clean_data, aes(x = HappyREV_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic() #between INCOME
+```
+
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-14-2.png)<!-- -->
+
+``` r
+clean_data %>%
+  group_by(SEX) %>% 
+  summarize(W = shapiro.test(HappyREV_log)$statistic, p_value = shapiro.test(Lifesat_log)$p.value)
+```
+
+    ## # A tibble: 3 × 3
+    ##   SEX        W  p_value
+    ##   <chr>  <dbl>    <dbl>
+    ## 1 Female 0.796 6.87e-30
+    ## 2 Male   0.809 2.08e-30
+    ## 3 Other  0.845 7.47e- 2
+
+``` r
+clean_data %>%
+  group_by(HOUSE_INCOME) %>% 
+  summarize(W = shapiro.test(HappyREV_log)$statistic, p_value = shapiro.test(Lifesat_log)$p.value)
+```
+
+    ## # A tibble: 3 × 3
+    ##   HOUSE_INCOME     W  p_value
+    ##   <chr>        <dbl>    <dbl>
+    ## 1 High         0.736 2.98e-14
+    ## 2 Low          0.811 6.42e-31
+    ## 3 Middle       0.777 5.86e-28
