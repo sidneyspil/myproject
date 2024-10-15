@@ -49,9 +49,6 @@ library(haven) #load CSV
 Reading dataset
 
 ``` r
-# Set working directory
-#setwd("C:/Users/sidne/OneDrive/Documents/GitHub/myproject")
-
 # Read the TSV file
 data <- read.table("C:/Users/sidne/OneDrive/Desktop/PSY329/38964-0001-Data.tsv", sep = "\t", header = TRUE, fill = TRUE, quote = "")
 
@@ -69,6 +66,8 @@ clean_data <- data %>%
   select(SEX,HHINC,HAPPY,SAT1,SAT2,SAT3,SAT4,SAT5,LONELY_A,LONELY_B,LONELY_C) 
 
 clean_data$SEX<-recode(data$SEX, '1' = 'Male', '2' = 'Female', '3'='Other')
+
+
 
 clean_data$HOUSE_INCOME<-recode(data$HHINC, '1' = 'Low', '2' = 'Low', '3'='Low','4'='Low','5'='Low','6'='Middle','7'='Middle','8'='Middle','9'='Middle','10'='Middle','11'='High','12'='High')
 ```
@@ -97,7 +96,7 @@ clean_data <- clean_data %>%
   select(SEX,HOUSE_INCOME,HAPPY_meaning, HAPPY_REV,Life_satisfaction, SAT1,SAT2,SAT3,SAT4,SAT5,Lonely, LONELY_A,LONELY_B,LONELY_C)
 
 clean_data<- drop_na(clean_data)
-
+clean_data <- clean_data %>% filter(SEX != "Other")
 
 write.csv(clean_data, "C:/Users/sidne/OneDrive/Desktop/PSY329/clean_data.csv", row.names = FALSE)
 ```
@@ -122,12 +121,11 @@ clean_data %>%
   summarize(W = shapiro.test(Lonely)$statistic, p_value = shapiro.test(Lonely)$p.value)
 ```
 
-    ## # A tibble: 3 × 3
+    ## # A tibble: 2 × 3
     ##   SEX        W  p_value
     ##   <chr>  <dbl>    <dbl>
     ## 1 Female 0.920 9.36e-41
     ## 2 Male   0.896 8.63e-44
-    ## 3 Other  0.815 1.60e- 4
 
 ``` r
 clean_data %>%
@@ -138,9 +136,9 @@ clean_data %>%
     ## # A tibble: 3 × 3
     ##   HOUSE_INCOME     W  p_value
     ##   <chr>        <dbl>    <dbl>
-    ## 1 High         0.837 8.98e-19
-    ## 2 Low          0.920 1.68e-45
-    ## 3 Middle       0.883 4.48e-36
+    ## 1 High         0.837 1.04e-18
+    ## 2 Low          0.920 2.19e-45
+    ## 3 Middle       0.883 4.35e-36
 
 Normality of Life satisfaction
 
@@ -162,12 +160,11 @@ clean_data %>%
   summarize(W = shapiro.test(Life_satisfaction)$statistic, p_value = shapiro.test(Life_satisfaction)$p.value)
 ```
 
-    ## # A tibble: 3 × 3
+    ## # A tibble: 2 × 3
     ##   SEX        W  p_value
     ##   <chr>  <dbl>    <dbl>
     ## 1 Female 0.981 2.63e-22
     ## 2 Male   0.978 4.91e-23
-    ## 3 Other  0.931 5.97e- 2
 
 ``` r
 clean_data %>%
@@ -178,9 +175,9 @@ clean_data %>%
     ## # A tibble: 3 × 3
     ##   HOUSE_INCOME     W  p_value
     ##   <chr>        <dbl>    <dbl>
-    ## 1 High         0.946 4.06e-10
-    ## 2 Low          0.983 4.79e-24
-    ## 3 Middle       0.967 8.39e-21
+    ## 1 High         0.946 4.65e-10
+    ## 2 Low          0.983 6.63e-24
+    ## 3 Middle       0.967 9.13e-21
 
 Normality of Happiness
 
@@ -202,12 +199,11 @@ clean_data %>%
   summarize(W = shapiro.test(HAPPY_REV)$statistic, p_value = shapiro.test(HAPPY_REV)$p.value)
 ```
 
-    ## # A tibble: 3 × 3
+    ## # A tibble: 2 × 3
     ##   SEX        W  p_value
     ##   <chr>  <dbl>    <dbl>
     ## 1 Female 0.817 2.66e-54
     ## 2 Male   0.826 2.85e-52
-    ## 3 Other  0.866 1.66e- 3
 
 ``` r
 clean_data %>%
@@ -218,9 +214,9 @@ clean_data %>%
     ## # A tibble: 3 × 3
     ##   HOUSE_INCOME     W  p_value
     ##   <chr>        <dbl>    <dbl>
-    ## 1 High         0.750 7.34e-23
-    ## 2 Low          0.830 1.63e-58
-    ## 3 Middle       0.793 1.73e-44
+    ## 1 High         0.748 6.98e-23
+    ## 2 Low          0.830 1.92e-58
+    ## 3 Middle       0.793 1.75e-44
 
 Variance of Lonely
 
@@ -230,12 +226,11 @@ clean_data %>%
   summarize(variacne = var(Lonely))
 ```
 
-    ## # A tibble: 3 × 2
+    ## # A tibble: 2 × 2
     ##   SEX    variacne
     ##   <chr>     <dbl>
     ## 1 Female    0.398
     ## 2 Male      0.422
-    ## 3 Other     0.496
 
 ``` r
 leveneTest(Lonely~SEX, clean_data)
@@ -246,8 +241,8 @@ leveneTest(Lonely~SEX, clean_data)
 
     ## Levene's Test for Homogeneity of Variance (center = median)
     ##         Df F value Pr(>F)
-    ## group    2  1.2168 0.2962
-    ##       7308
+    ## group    1  2.4308  0.119
+    ##       7280
 
 ``` r
 clean_data %>%
@@ -258,8 +253,8 @@ clean_data %>%
     ## # A tibble: 3 × 2
     ##   HOUSE_INCOME variacne
     ##   <chr>           <dbl>
-    ## 1 High            0.339
-    ## 2 Low             0.416
+    ## 1 High            0.340
+    ## 2 Low             0.414
     ## 3 Middle          0.369
 
 ``` r
@@ -271,8 +266,8 @@ leveneTest(Lonely~HOUSE_INCOME, clean_data)
 
     ## Levene's Test for Homogeneity of Variance (center = median)
     ##         Df F value    Pr(>F)    
-    ## group    2  9.9273 4.949e-05 ***
-    ##       7308                      
+    ## group    2  9.4275 8.147e-05 ***
+    ##       7279                      
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -284,12 +279,11 @@ clean_data %>%
   summarize(variacne = var(Life_satisfaction))
 ```
 
-    ## # A tibble: 3 × 2
+    ## # A tibble: 2 × 2
     ##   SEX    variacne
     ##   <chr>     <dbl>
     ## 1 Female    0.953
-    ## 2 Male      1.02 
-    ## 3 Other     1.39
+    ## 2 Male      1.02
 
 ``` r
 leveneTest(Life_satisfaction~SEX, clean_data)
@@ -299,9 +293,9 @@ leveneTest(Life_satisfaction~SEX, clean_data)
     ## factor.
 
     ## Levene's Test for Homogeneity of Variance (center = median)
-    ##         Df F value Pr(>F)  
-    ## group    2  2.9108 0.0545 .
-    ##       7308                 
+    ##         Df F value  Pr(>F)  
+    ## group    1  3.3263 0.06822 .
+    ##       7280                  
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -314,9 +308,9 @@ clean_data %>%
     ## # A tibble: 3 × 2
     ##   HOUSE_INCOME variacne
     ##   <chr>           <dbl>
-    ## 1 High            0.796
-    ## 2 Low             0.960
-    ## 3 Middle          0.897
+    ## 1 High            0.800
+    ## 2 Low             0.957
+    ## 3 Middle          0.894
 
 ``` r
 leveneTest(Life_satisfaction~HOUSE_INCOME, clean_data)
@@ -327,8 +321,8 @@ leveneTest(Life_satisfaction~HOUSE_INCOME, clean_data)
 
     ## Levene's Test for Homogeneity of Variance (center = median)
     ##         Df F value    Pr(>F)    
-    ## group    2   9.328 8.996e-05 ***
-    ##       7308                      
+    ## group    2  9.0104 0.0001235 ***
+    ##       7279                      
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -340,12 +334,11 @@ clean_data %>%
   summarize(variacne = var(HAPPY_REV))
 ```
 
-    ## # A tibble: 3 × 2
+    ## # A tibble: 2 × 2
     ##   SEX    variacne
     ##   <chr>     <dbl>
     ## 1 Female    0.515
     ## 2 Male      0.549
-    ## 3 Other     0.734
 
 ``` r
 leveneTest(HAPPY_REV~SEX, clean_data)
@@ -356,8 +349,8 @@ leveneTest(HAPPY_REV~SEX, clean_data)
 
     ## Levene's Test for Homogeneity of Variance (center = median)
     ##         Df F value   Pr(>F)   
-    ## group    2  6.1011 0.002252 **
-    ##       7308                    
+    ## group    1  10.317 0.001324 **
+    ##       7280                    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -370,10 +363,10 @@ clean_data %>%
     ## # A tibble: 4 × 2
     ##   HAPPY_REV variacne
     ##       <dbl>    <dbl>
-    ## 1         1    0.465
-    ## 2         2    0.541
-    ## 3         3    0.616
-    ## 4         4    0.674
+    ## 1         1    0.460
+    ## 2         2    0.538
+    ## 3         3    0.614
+    ## 4         4    0.675
 
 ``` r
 leveneTest(HAPPY_REV~HOUSE_INCOME, clean_data)
@@ -384,8 +377,8 @@ leveneTest(HAPPY_REV~HOUSE_INCOME, clean_data)
 
     ## Levene's Test for Homogeneity of Variance (center = median)
     ##         Df F value    Pr(>F)    
-    ## group    2    11.6 9.341e-06 ***
-    ##       7308                      
+    ## group    2  11.011 1.679e-05 ***
+    ##       7279                      
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -419,12 +412,11 @@ clean_data %>%
   summarize(W = shapiro.test(Lonely_log)$statistic, p_value = shapiro.test(Lonely_log)$p.value)
 ```
 
-    ## # A tibble: 3 × 3
+    ## # A tibble: 2 × 3
     ##   SEX        W  p_value
     ##   <chr>  <dbl>    <dbl>
     ## 1 Female 0.921 1.44e-40
     ## 2 Male   0.901 5.25e-43
-    ## 3 Other  0.790 5.55e- 5
 
 ``` r
 clean_data %>%
@@ -435,9 +427,9 @@ clean_data %>%
     ## # A tibble: 3 × 3
     ##   HOUSE_INCOME     W  p_value
     ##   <chr>        <dbl>    <dbl>
-    ## 1 High         0.849 4.57e-18
-    ## 2 Low          0.920 1.92e-45
-    ## 3 Middle       0.891 3.34e-35
+    ## 1 High         0.849 5.22e-18
+    ## 2 Low          0.921 2.58e-45
+    ## 3 Middle       0.890 3.33e-35
 
 Normality of Lifesat_Log
 
@@ -459,12 +451,11 @@ clean_data %>%
   summarize(W = shapiro.test(Lifesat_log)$statistic, p_value = shapiro.test(Lifesat_log)$p.value)
 ```
 
-    ## # A tibble: 3 × 3
+    ## # A tibble: 2 × 3
     ##   SEX        W  p_value
     ##   <chr>  <dbl>    <dbl>
     ## 1 Female 0.963 6.87e-30
     ## 2 Male   0.959 2.08e-30
-    ## 3 Other  0.935 7.47e- 2
 
 ``` r
 clean_data %>%
@@ -475,9 +466,9 @@ clean_data %>%
     ## # A tibble: 3 × 3
     ##   HOUSE_INCOME     W  p_value
     ##   <chr>        <dbl>    <dbl>
-    ## 1 High         0.904 2.98e-14
-    ## 2 Low          0.970 6.42e-31
-    ## 3 Middle       0.938 5.86e-28
+    ## 1 High         0.904 3.58e-14
+    ## 2 Low          0.970 8.30e-31
+    ## 3 Middle       0.938 6.38e-28
 
 Normality of Happrev_log
 
@@ -499,12 +490,11 @@ clean_data %>%
   summarize(W = shapiro.test(HappyREV_log)$statistic, p_value = shapiro.test(Lifesat_log)$p.value)
 ```
 
-    ## # A tibble: 3 × 3
+    ## # A tibble: 2 × 3
     ##   SEX        W  p_value
     ##   <chr>  <dbl>    <dbl>
     ## 1 Female 0.796 6.87e-30
     ## 2 Male   0.809 2.08e-30
-    ## 3 Other  0.845 7.47e- 2
 
 ``` r
 clean_data %>%
@@ -515,6 +505,6 @@ clean_data %>%
     ## # A tibble: 3 × 3
     ##   HOUSE_INCOME     W  p_value
     ##   <chr>        <dbl>    <dbl>
-    ## 1 High         0.736 2.98e-14
-    ## 2 Low          0.811 6.42e-31
-    ## 3 Middle       0.777 5.86e-28
+    ## 1 High         0.733 3.58e-14
+    ## 2 Low          0.811 8.30e-31
+    ## 3 Middle       0.777 6.38e-28
