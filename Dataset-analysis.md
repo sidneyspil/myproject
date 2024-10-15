@@ -36,8 +36,60 @@ library(dplyr) #recode variables
 ``` r
 library(tidyr)
 library(ggplot2)
-#library(psych)
-#library(bruceR)
+library(psych)
+```
+
+    ## 
+    ## Attaching package: 'psych'
+
+    ## The following objects are masked from 'package:ggplot2':
+    ## 
+    ##     %+%, alpha
+
+    ## The following object is masked from 'package:car':
+    ## 
+    ##     logit
+
+``` r
+library(bruceR)
+```
+
+    ## 
+    ## bruceR (v2024.6)
+    ## Broadly Useful Convenient and Efficient R functions
+    ## 
+    ## Packages also loaded:
+    ## ✔ data.table ✔ emmeans
+    ## ✔ dplyr      ✔ lmerTest
+    ## ✔ tidyr      ✔ effectsize
+    ## ✔ stringr    ✔ performance
+    ## ✔ ggplot2    ✔ interactions
+    ## 
+    ## Main functions of `bruceR`:
+    ## cc()             Describe()  TTEST()
+    ## add()            Freq()      MANOVA()
+    ## .mean()          Corr()      EMMEANS()
+    ## set.wd()         Alpha()     PROCESS()
+    ## import()         EFA()       model_summary()
+    ## print_table()    CFA()       lavaan_summary()
+    ## 
+    ## For full functionality, please install all dependencies:
+    ## install.packages("bruceR", dep=TRUE)
+    ## 
+    ## Online documentation:
+    ## https://psychbruce.github.io/bruceR
+    ## 
+    ## To use this package in publications, please cite:
+    ## Bao, H.-W.-S. (2024). bruceR: Broadly useful convenient and efficient R functions (Version 2024.6) [Computer software]. https://CRAN.R-project.org/package=bruceR
+
+    ## 
+    ## These packages are dependencies of `bruceR` but not installed:
+    ## - pacman, openxlsx, ggtext, vars, phia, MuMIn, GGally
+    ## 
+    ## ***** Install all dependencies *****
+    ## install.packages("bruceR", dep=TRUE)
+
+``` r
 library(haven) #load CSV
 
 #install.packages("nortest")
@@ -116,29 +168,44 @@ ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.5) + facet_wra
 ![](Dataset-analysis_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
 
 ``` r
-clean_data %>%
-  group_by(SEX) %>% 
-  summarize(W = shapiro.test(Lonely)$statistic, p_value = shapiro.test(Lonely)$p.value)
+#clean_data %>%
+ # group_by(SEX) %>% 
+  #summarize(W = shapiro.test(Lonely)$statistic, p_value = shapiro.test(Lonely)$p.value)
+
+#clean_data %>%
+ # group_by(HOUSE_INCOME) %>% 
+  #summarize(W = shapiro.test(Lonely)$statistic, p_value = shapiro.test(Lonely)$p.value)
+
+describeBy(Lonely ~ SEX, data= clean_data)
 ```
 
-    ## # A tibble: 2 × 3
-    ##   SEX        W  p_value
-    ##   <chr>  <dbl>    <dbl>
-    ## 1 Female 0.920 9.36e-41
-    ## 2 Male   0.896 8.63e-44
+    ## 
+    ##  Descriptive statistics by group 
+    ## SEX: Female
+    ##        vars    n mean   sd median trimmed  mad min max range skew kurtosis   se
+    ## Lonely    1 3749 1.85 0.63      2    1.81 0.99   1   3     2 0.26    -0.95 0.01
+    ## ------------------------------------------------------------ 
+    ## SEX: Male
+    ##        vars    n mean   sd median trimmed  mad min max range skew kurtosis   se
+    ## Lonely    1 3533 1.76 0.65   1.67     1.7 0.99   1   3     2 0.43    -0.95 0.01
 
 ``` r
-clean_data %>%
-  group_by(HOUSE_INCOME) %>% 
-  summarize(W = shapiro.test(Lonely)$statistic, p_value = shapiro.test(Lonely)$p.value)
+describeBy(Lonely ~ HOUSE_INCOME, data= clean_data)
 ```
 
-    ## # A tibble: 3 × 3
-    ##   HOUSE_INCOME     W  p_value
-    ##   <chr>        <dbl>    <dbl>
-    ## 1 High         0.837 1.04e-18
-    ## 2 Low          0.920 2.19e-45
-    ## 3 Middle       0.883 4.35e-36
+    ## 
+    ##  Descriptive statistics by group 
+    ## HOUSE_INCOME: High
+    ##        vars   n mean   sd median trimmed  mad min max range skew kurtosis   se
+    ## Lonely    1 355 1.53 0.58   1.33    1.45 0.49   1   3     2 0.86    -0.31 0.03
+    ## ------------------------------------------------------------ 
+    ## HOUSE_INCOME: Low
+    ##        vars    n mean   sd median trimmed  mad min max range skew kurtosis   se
+    ## Lonely    1 4970 1.88 0.64      2    1.85 0.99   1   3     2 0.21    -1.02 0.01
+    ## ------------------------------------------------------------ 
+    ## HOUSE_INCOME: Middle
+    ##        vars    n mean   sd median trimmed  mad min max range skew kurtosis   se
+    ## Lonely    1 1957 1.66 0.61   1.67    1.59 0.99   1   3     2 0.59    -0.65 0.01
 
 Normality of Life satisfaction
 
@@ -155,29 +222,54 @@ ggplot(clean_data, aes(x = Life_satisfaction)) + geom_histogram(binwidth = 0.5) 
 ![](Dataset-analysis_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
 
 ``` r
-clean_data %>%
-  group_by(SEX) %>% 
-  summarize(W = shapiro.test(Life_satisfaction)$statistic, p_value = shapiro.test(Life_satisfaction)$p.value)
+#clean_data %>%
+ # group_by(SEX) %>% 
+  #summarize(W = shapiro.test(Life_satisfaction)$statistic, p_value = shapiro.test(Life_satisfaction)$p.value)
+
+#clean_data %>%
+ # group_by(HOUSE_INCOME) %>% 
+  #summarize(W = shapiro.test(Life_satisfaction)$statistic, p_value = shapiro.test(Life_satisfaction)$p.value)
+
+describeBy(Life_satisfaction ~ SEX, data= clean_data)
 ```
 
-    ## # A tibble: 2 × 3
-    ##   SEX        W  p_value
-    ##   <chr>  <dbl>    <dbl>
-    ## 1 Female 0.981 2.63e-22
-    ## 2 Male   0.978 4.91e-23
+    ## 
+    ##  Descriptive statistics by group 
+    ## SEX: Female
+    ##                   vars    n mean   sd median trimmed  mad min max range  skew
+    ## Life_satisfaction    1 3749 3.08 0.98    3.2     3.1 1.19   1   5     4 -0.19
+    ##                   kurtosis   se
+    ## Life_satisfaction    -0.68 0.02
+    ## ------------------------------------------------------------ 
+    ## SEX: Male
+    ##                   vars    n mean   sd median trimmed  mad min max range  skew
+    ## Life_satisfaction    1 3533 3.11 1.01    3.2    3.13 1.19   1   5     4 -0.21
+    ##                   kurtosis   se
+    ## Life_satisfaction    -0.69 0.02
 
 ``` r
-clean_data %>%
-  group_by(HOUSE_INCOME) %>% 
-  summarize(W = shapiro.test(Life_satisfaction)$statistic, p_value = shapiro.test(Life_satisfaction)$p.value)
+describeBy(Life_satisfaction ~ HOUSE_INCOME, data= clean_data)
 ```
 
-    ## # A tibble: 3 × 3
-    ##   HOUSE_INCOME     W  p_value
-    ##   <chr>        <dbl>    <dbl>
-    ## 1 High         0.946 4.65e-10
-    ## 2 Low          0.983 6.63e-24
-    ## 3 Middle       0.967 9.13e-21
+    ## 
+    ##  Descriptive statistics by group 
+    ## HOUSE_INCOME: High
+    ##                   vars   n mean   sd median trimmed  mad min max range  skew
+    ## Life_satisfaction    1 355 3.69 0.89    3.8    3.77 0.89   1   5     4 -0.77
+    ##                   kurtosis   se
+    ## Life_satisfaction     0.35 0.05
+    ## ------------------------------------------------------------ 
+    ## HOUSE_INCOME: Low
+    ##                   vars    n mean   sd median trimmed  mad min max range  skew
+    ## Life_satisfaction    1 4970 2.94 0.98      3    2.95 1.19   1   5     4 -0.06
+    ##                   kurtosis   se
+    ## Life_satisfaction    -0.68 0.01
+    ## ------------------------------------------------------------ 
+    ## HOUSE_INCOME: Middle
+    ##                   vars    n mean   sd median trimmed  mad min max range  skew
+    ## Life_satisfaction    1 1957 3.36 0.95    3.6    3.41 0.89   1   5     4 -0.49
+    ##                   kurtosis   se
+    ## Life_satisfaction    -0.38 0.02
 
 Normality of Happiness
 
@@ -194,29 +286,54 @@ ggplot(clean_data, aes(x = HAPPY_REV)) + geom_histogram(binwidth = 1) + facet_wr
 ![](Dataset-analysis_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
 
 ``` r
-clean_data %>%
-  group_by(SEX) %>% 
-  summarize(W = shapiro.test(HAPPY_REV)$statistic, p_value = shapiro.test(HAPPY_REV)$p.value)
+#clean_data %>%
+ # group_by(SEX) %>% 
+  #summarize(W = shapiro.test(HAPPY_REV)$statistic, p_value = shapiro.test(HAPPY_REV)$p.value)
+
+#clean_data %>%
+ # group_by(HOUSE_INCOME) %>% 
+  #summarize(W = shapiro.test(HAPPY_REV)$statistic, p_value = shapiro.test(HAPPY_REV)$p.value)
+
+describeBy(HAPPY_REV ~ SEX, data= clean_data)
 ```
 
-    ## # A tibble: 2 × 3
-    ##   SEX        W  p_value
-    ##   <chr>  <dbl>    <dbl>
-    ## 1 Female 0.817 2.66e-54
-    ## 2 Male   0.826 2.85e-52
+    ## 
+    ##  Descriptive statistics by group 
+    ## SEX: Female
+    ##           vars    n mean   sd median trimmed mad min max range  skew kurtosis
+    ## HAPPY_REV    1 3749 3.01 0.72      3    3.04   0   1   4     3 -0.46     0.22
+    ##             se
+    ## HAPPY_REV 0.01
+    ## ------------------------------------------------------------ 
+    ## SEX: Male
+    ##           vars    n mean   sd median trimmed mad min max range  skew kurtosis
+    ## HAPPY_REV    1 3533 3.05 0.74      3    3.09   0   1   4     3 -0.44    -0.09
+    ##             se
+    ## HAPPY_REV 0.01
 
 ``` r
-clean_data %>%
-  group_by(HOUSE_INCOME) %>% 
-  summarize(W = shapiro.test(HAPPY_REV)$statistic, p_value = shapiro.test(HAPPY_REV)$p.value)
+describeBy(HAPPY_REV ~ HOUSE_INCOME, data= clean_data)
 ```
 
-    ## # A tibble: 3 × 3
-    ##   HOUSE_INCOME     W  p_value
-    ##   <chr>        <dbl>    <dbl>
-    ## 1 High         0.748 6.98e-23
-    ## 2 Low          0.830 1.92e-58
-    ## 3 Middle       0.793 1.75e-44
+    ## 
+    ##  Descriptive statistics by group 
+    ## HOUSE_INCOME: High
+    ##           vars   n mean   sd median trimmed mad min max range  skew kurtosis
+    ## HAPPY_REV    1 355 3.41 0.67      4    3.51   0   1   4     3 -0.87     0.31
+    ##             se
+    ## HAPPY_REV 0.04
+    ## ------------------------------------------------------------ 
+    ## HOUSE_INCOME: Low
+    ##           vars    n mean   sd median trimmed mad min max range  skew kurtosis
+    ## HAPPY_REV    1 4970 2.95 0.74      3    2.98   0   1   4     3 -0.41     0.01
+    ##             se
+    ## HAPPY_REV 0.01
+    ## ------------------------------------------------------------ 
+    ## HOUSE_INCOME: Middle
+    ##           vars    n mean   sd median trimmed mad min max range  skew kurtosis
+    ## HAPPY_REV    1 1957 3.15 0.67      3     3.2   0   1   4     3 -0.44     0.21
+    ##             se
+    ## HAPPY_REV 0.02
 
 Variance of Lonely
 
@@ -356,17 +473,16 @@ leveneTest(HAPPY_REV~SEX, clean_data)
 
 ``` r
 clean_data %>%
-  group_by(HAPPY_REV) %>%
+  group_by(HOUSE_INCOME) %>%
   summarize(variacne = var(Life_satisfaction))
 ```
 
-    ## # A tibble: 4 × 2
-    ##   HAPPY_REV variacne
-    ##       <dbl>    <dbl>
-    ## 1         1    0.460
-    ## 2         2    0.538
-    ## 3         3    0.614
-    ## 4         4    0.675
+    ## # A tibble: 3 × 2
+    ##   HOUSE_INCOME variacne
+    ##   <chr>           <dbl>
+    ## 1 High            0.800
+    ## 2 Low             0.957
+    ## 3 Middle          0.894
 
 ``` r
 leveneTest(HAPPY_REV~HOUSE_INCOME, clean_data)
@@ -381,130 +497,3 @@ leveneTest(HAPPY_REV~HOUSE_INCOME, clean_data)
     ##       7279                      
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-Data transformations
-
-``` r
-clean_data$Lonely_log <- sqrt(clean_data$Lonely)
-
-clean_data$HappyREV_log <- sqrt(clean_data$HAPPY_REV)
-
-clean_data$Lifesat_log <- sqrt(clean_data$Life_satisfaction)
-```
-
-Normality of Lonely_Log
-
-``` r
-ggplot(clean_data, aes(x = Lonely_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~SEX)+theme_classic() #between SEX
-```
-
-![](Dataset-analysis_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
-
-``` r
-ggplot(clean_data, aes(x = Lonely_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic() #between INCOME
-```
-
-![](Dataset-analysis_files/figure-gfm/unnamed-chunk-12-2.png)<!-- -->
-
-``` r
-clean_data %>%
-  group_by(SEX) %>% 
-  summarize(W = shapiro.test(Lonely_log)$statistic, p_value = shapiro.test(Lonely_log)$p.value)
-```
-
-    ## # A tibble: 2 × 3
-    ##   SEX        W  p_value
-    ##   <chr>  <dbl>    <dbl>
-    ## 1 Female 0.921 1.44e-40
-    ## 2 Male   0.901 5.25e-43
-
-``` r
-clean_data %>%
-  group_by(HOUSE_INCOME) %>% 
-  summarize(W = shapiro.test(Lonely_log)$statistic, p_value = shapiro.test(Lonely_log)$p.value)
-```
-
-    ## # A tibble: 3 × 3
-    ##   HOUSE_INCOME     W  p_value
-    ##   <chr>        <dbl>    <dbl>
-    ## 1 High         0.849 5.22e-18
-    ## 2 Low          0.921 2.58e-45
-    ## 3 Middle       0.890 3.33e-35
-
-Normality of Lifesat_Log
-
-``` r
-ggplot(clean_data, aes(x = Lifesat_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~SEX)+theme_classic() #between SEX
-```
-
-![](Dataset-analysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
-
-``` r
-ggplot(clean_data, aes(x = Lifesat_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic() #between INCOME
-```
-
-![](Dataset-analysis_files/figure-gfm/unnamed-chunk-13-2.png)<!-- -->
-
-``` r
-clean_data %>%
-  group_by(SEX) %>% 
-  summarize(W = shapiro.test(Lifesat_log)$statistic, p_value = shapiro.test(Lifesat_log)$p.value)
-```
-
-    ## # A tibble: 2 × 3
-    ##   SEX        W  p_value
-    ##   <chr>  <dbl>    <dbl>
-    ## 1 Female 0.963 6.87e-30
-    ## 2 Male   0.959 2.08e-30
-
-``` r
-clean_data %>%
-  group_by(HOUSE_INCOME) %>% 
-  summarize(W = shapiro.test(Lifesat_log)$statistic, p_value = shapiro.test(Lifesat_log)$p.value)
-```
-
-    ## # A tibble: 3 × 3
-    ##   HOUSE_INCOME     W  p_value
-    ##   <chr>        <dbl>    <dbl>
-    ## 1 High         0.904 3.58e-14
-    ## 2 Low          0.970 8.30e-31
-    ## 3 Middle       0.938 6.38e-28
-
-Normality of Happrev_log
-
-``` r
-ggplot(clean_data, aes(x = HappyREV_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~SEX)+theme_classic() #between SEX
-```
-
-![](Dataset-analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
-
-``` r
-ggplot(clean_data, aes(x = HappyREV_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic() #between INCOME
-```
-
-![](Dataset-analysis_files/figure-gfm/unnamed-chunk-14-2.png)<!-- -->
-
-``` r
-clean_data %>%
-  group_by(SEX) %>% 
-  summarize(W = shapiro.test(HappyREV_log)$statistic, p_value = shapiro.test(Lifesat_log)$p.value)
-```
-
-    ## # A tibble: 2 × 3
-    ##   SEX        W  p_value
-    ##   <chr>  <dbl>    <dbl>
-    ## 1 Female 0.796 6.87e-30
-    ## 2 Male   0.809 2.08e-30
-
-``` r
-clean_data %>%
-  group_by(HOUSE_INCOME) %>% 
-  summarize(W = shapiro.test(HappyREV_log)$statistic, p_value = shapiro.test(Lifesat_log)$p.value)
-```
-
-    ## # A tibble: 3 × 3
-    ##   HOUSE_INCOME     W  p_value
-    ##   <chr>        <dbl>    <dbl>
-    ## 1 High         0.733 3.58e-14
-    ## 2 Low          0.811 8.30e-31
-    ## 3 Middle       0.777 6.38e-28

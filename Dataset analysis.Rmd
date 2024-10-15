@@ -15,8 +15,8 @@ library(car)
 library(dplyr) #recode variables
 library(tidyr)
 library(ggplot2)
-#library(psych)
-#library(bruceR)
+library(psych)
+library(bruceR)
 library(haven) #load CSV
 
 #install.packages("nortest")
@@ -82,13 +82,16 @@ ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.5) + facet_wra
 
 ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic() #between INCOME
 
-clean_data %>%
-  group_by(SEX) %>% 
-  summarize(W = shapiro.test(Lonely)$statistic, p_value = shapiro.test(Lonely)$p.value)
+#clean_data %>%
+ # group_by(SEX) %>% 
+  #summarize(W = shapiro.test(Lonely)$statistic, p_value = shapiro.test(Lonely)$p.value)
 
-clean_data %>%
-  group_by(HOUSE_INCOME) %>% 
-  summarize(W = shapiro.test(Lonely)$statistic, p_value = shapiro.test(Lonely)$p.value)
+#clean_data %>%
+ # group_by(HOUSE_INCOME) %>% 
+  #summarize(W = shapiro.test(Lonely)$statistic, p_value = shapiro.test(Lonely)$p.value)
+
+describeBy(Lonely ~ SEX, data= clean_data)
+describeBy(Lonely ~ HOUSE_INCOME, data= clean_data)
 ```
 
 Normality of Life satisfaction
@@ -97,13 +100,17 @@ ggplot(clean_data, aes(x = Life_satisfaction)) + geom_histogram(binwidth = 0.5) 
 
 ggplot(clean_data, aes(x = Life_satisfaction)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic()
 
-clean_data %>%
-  group_by(SEX) %>% 
-  summarize(W = shapiro.test(Life_satisfaction)$statistic, p_value = shapiro.test(Life_satisfaction)$p.value)
+#clean_data %>%
+ # group_by(SEX) %>% 
+  #summarize(W = shapiro.test(Life_satisfaction)$statistic, p_value = shapiro.test(Life_satisfaction)$p.value)
 
-clean_data %>%
-  group_by(HOUSE_INCOME) %>% 
-  summarize(W = shapiro.test(Life_satisfaction)$statistic, p_value = shapiro.test(Life_satisfaction)$p.value)
+#clean_data %>%
+ # group_by(HOUSE_INCOME) %>% 
+  #summarize(W = shapiro.test(Life_satisfaction)$statistic, p_value = shapiro.test(Life_satisfaction)$p.value)
+
+describeBy(Life_satisfaction ~ SEX, data= clean_data)
+describeBy(Life_satisfaction ~ HOUSE_INCOME, data= clean_data)
+
 ```
 
 Normality of Happiness
@@ -112,13 +119,16 @@ ggplot(clean_data, aes(x = HAPPY_REV)) + geom_histogram(binwidth = 1) + facet_wr
 
 ggplot(clean_data, aes(x = HAPPY_REV)) + geom_histogram(binwidth = 1) + facet_wrap(~HOUSE_INCOME)+theme_classic()
 
-clean_data %>%
-  group_by(SEX) %>% 
-  summarize(W = shapiro.test(HAPPY_REV)$statistic, p_value = shapiro.test(HAPPY_REV)$p.value)
+#clean_data %>%
+ # group_by(SEX) %>% 
+  #summarize(W = shapiro.test(HAPPY_REV)$statistic, p_value = shapiro.test(HAPPY_REV)$p.value)
 
-clean_data %>%
-  group_by(HOUSE_INCOME) %>% 
-  summarize(W = shapiro.test(HAPPY_REV)$statistic, p_value = shapiro.test(HAPPY_REV)$p.value)
+#clean_data %>%
+ # group_by(HOUSE_INCOME) %>% 
+  #summarize(W = shapiro.test(HAPPY_REV)$statistic, p_value = shapiro.test(HAPPY_REV)$p.value)
+
+describeBy(HAPPY_REV ~ SEX, data= clean_data)
+describeBy(HAPPY_REV ~ HOUSE_INCOME, data= clean_data)
 
 ```
 Variance of Lonely
@@ -159,63 +169,13 @@ clean_data %>%
 leveneTest(HAPPY_REV~SEX, clean_data)
 
 clean_data %>%
-  group_by(HAPPY_REV) %>%
+  group_by(HOUSE_INCOME) %>%
   summarize(variacne = var(Life_satisfaction))
 
 leveneTest(HAPPY_REV~HOUSE_INCOME, clean_data)
 ```
-Data transformations
-```{r}
-clean_data$Lonely_log <- sqrt(clean_data$Lonely)
 
-clean_data$HappyREV_log <- sqrt(clean_data$HAPPY_REV)
 
-clean_data$Lifesat_log <- sqrt(clean_data$Life_satisfaction)
-```
 
-Normality of Lonely_Log
-```{r}
 
-ggplot(clean_data, aes(x = Lonely_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~SEX)+theme_classic() #between SEX
 
-ggplot(clean_data, aes(x = Lonely_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic() #between INCOME
-
-clean_data %>%
-  group_by(SEX) %>% 
-  summarize(W = shapiro.test(Lonely_log)$statistic, p_value = shapiro.test(Lonely_log)$p.value)
-
-clean_data %>%
-  group_by(HOUSE_INCOME) %>% 
-  summarize(W = shapiro.test(Lonely_log)$statistic, p_value = shapiro.test(Lonely_log)$p.value)
-```
-
-Normality of Lifesat_Log
-```{r}
-
-ggplot(clean_data, aes(x = Lifesat_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~SEX)+theme_classic() #between SEX
-
-ggplot(clean_data, aes(x = Lifesat_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic() #between INCOME
-
-clean_data %>%
-  group_by(SEX) %>% 
-  summarize(W = shapiro.test(Lifesat_log)$statistic, p_value = shapiro.test(Lifesat_log)$p.value)
-
-clean_data %>%
-  group_by(HOUSE_INCOME) %>% 
-  summarize(W = shapiro.test(Lifesat_log)$statistic, p_value = shapiro.test(Lifesat_log)$p.value)
-```
-Normality of Happrev_log
-```{r}
-
-ggplot(clean_data, aes(x = HappyREV_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~SEX)+theme_classic() #between SEX
-
-ggplot(clean_data, aes(x = HappyREV_log)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic() #between INCOME
-
-clean_data %>%
-  group_by(SEX) %>% 
-  summarize(W = shapiro.test(HappyREV_log)$statistic, p_value = shapiro.test(Lifesat_log)$p.value)
-
-clean_data %>%
-  group_by(HOUSE_INCOME) %>% 
-  summarize(W = shapiro.test(HappyREV_log)$statistic, p_value = shapiro.test(Lifesat_log)$p.value)
-```
