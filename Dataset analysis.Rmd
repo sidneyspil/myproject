@@ -26,8 +26,6 @@ library(haven) #load CSV
 ```
 Reading dataset 
 ```{r}
-# Set working directory
-#setwd("C:/Users/sidne/OneDrive/Documents/GitHub/myproject")
 
 # Read the TSV file
 data <- read.table("C:/Users/sidne/OneDrive/Desktop/PSY329/38964-0001-Data.tsv", sep = "\t", header = TRUE, fill = TRUE, quote = "")
@@ -46,6 +44,8 @@ clean_data <- data %>%
   select(SEX,HHINC,HAPPY,SAT1,SAT2,SAT3,SAT4,SAT5,LONELY_A,LONELY_B,LONELY_C) 
 
 clean_data$SEX<-recode(data$SEX, '1' = 'Male', '2' = 'Female', '3'='Other')
+
+
 
 clean_data$HOUSE_INCOME<-recode(data$HHINC, '1' = 'Low', '2' = 'Low', '3'='Low','4'='Low','5'='Low','6'='Middle','7'='Middle','8'='Middle','9'='Middle','10'='Middle','11'='High','12'='High')
 
@@ -69,7 +69,7 @@ clean_data <- clean_data %>%
   select(SEX,HOUSE_INCOME,HAPPY_meaning, HAPPY_REV,Life_satisfaction, SAT1,SAT2,SAT3,SAT4,SAT5,Lonely, LONELY_A,LONELY_B,LONELY_C)
 
 clean_data<- drop_na(clean_data)
-
+clean_data <- clean_data %>% filter(SEX != "Other")
 
 write.csv(clean_data, "C:/Users/sidne/OneDrive/Desktop/PSY329/clean_data.csv", row.names = FALSE)
 
