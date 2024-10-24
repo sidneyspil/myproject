@@ -91,7 +91,30 @@ library(bruceR)
 
 ``` r
 library(haven) #load CSV
+library(Rmisc)
+```
 
+    ## Loading required package: lattice
+
+    ## Loading required package: plyr
+
+    ## ------------------------------------------------------------------------------
+
+    ## You have loaded plyr after dplyr - this is likely to cause problems.
+    ## If you need functions from both plyr and dplyr, please load plyr first, then dplyr:
+    ## library(plyr); library(dplyr)
+
+    ## ------------------------------------------------------------------------------
+
+    ## 
+    ## Attaching package: 'plyr'
+
+    ## The following objects are masked from 'package:dplyr':
+    ## 
+    ##     arrange, count, desc, failwith, id, mutate, rename, summarise,
+    ##     summarize
+
+``` r
 #install.packages("nortest")
 
 #ibrary(nortest)
@@ -145,7 +168,7 @@ clean_data <- clean_data %>%
 clean_data$HAPPY_REV <- 5 - clean_data$HAPPY #reverse code happy so higher number = happier
 
 clean_data <- clean_data %>%
-  select(SEX,HOUSE_INCOME,HAPPY_meaning, HAPPY_REV,Life_satisfaction, SAT1,SAT2,SAT3,SAT4,SAT5,Lonely, LONELY_A,LONELY_B,LONELY_C)
+  select(SEX,HOUSE_INCOME,HHINC,HAPPY_meaning, HAPPY_REV,Life_satisfaction, SAT1,SAT2,SAT3,SAT4,SAT5,Lonely, LONELY_A,LONELY_B,LONELY_C)
 
 clean_data<- drop_na(clean_data)
 clean_data <- clean_data %>% filter(SEX != "Other")
@@ -343,11 +366,8 @@ clean_data %>%
   summarize(variacne = var(Lonely))
 ```
 
-    ## # A tibble: 2 × 2
-    ##   SEX    variacne
-    ##   <chr>     <dbl>
-    ## 1 Female    0.398
-    ## 2 Male      0.422
+    ##    variacne
+    ## 1 0.4118587
 
 ``` r
 leveneTest(Lonely~SEX, clean_data)
@@ -367,12 +387,8 @@ clean_data %>%
   summarize(variacne = var(Lonely))
 ```
 
-    ## # A tibble: 3 × 2
-    ##   HOUSE_INCOME variacne
-    ##   <chr>           <dbl>
-    ## 1 High            0.340
-    ## 2 Low             0.414
-    ## 3 Middle          0.369
+    ##    variacne
+    ## 1 0.4118587
 
 ``` r
 leveneTest(Lonely~HOUSE_INCOME, clean_data)
@@ -396,11 +412,8 @@ clean_data %>%
   summarize(variacne = var(Life_satisfaction))
 ```
 
-    ## # A tibble: 2 × 2
-    ##   SEX    variacne
-    ##   <chr>     <dbl>
-    ## 1 Female    0.953
-    ## 2 Male      1.02
+    ##    variacne
+    ## 1 0.9842728
 
 ``` r
 leveneTest(Life_satisfaction~SEX, clean_data)
@@ -422,12 +435,8 @@ clean_data %>%
   summarize(variacne = var(Life_satisfaction))
 ```
 
-    ## # A tibble: 3 × 2
-    ##   HOUSE_INCOME variacne
-    ##   <chr>           <dbl>
-    ## 1 High            0.800
-    ## 2 Low             0.957
-    ## 3 Middle          0.894
+    ##    variacne
+    ## 1 0.9842728
 
 ``` r
 leveneTest(Life_satisfaction~HOUSE_INCOME, clean_data)
@@ -451,11 +460,8 @@ clean_data %>%
   summarize(variacne = var(HAPPY_REV))
 ```
 
-    ## # A tibble: 2 × 2
-    ##   SEX    variacne
-    ##   <chr>     <dbl>
-    ## 1 Female    0.515
-    ## 2 Male      0.549
+    ##    variacne
+    ## 1 0.5315334
 
 ``` r
 leveneTest(HAPPY_REV~SEX, clean_data)
@@ -477,12 +483,8 @@ clean_data %>%
   summarize(variacne = var(Life_satisfaction))
 ```
 
-    ## # A tibble: 3 × 2
-    ##   HOUSE_INCOME variacne
-    ##   <chr>           <dbl>
-    ## 1 High            0.800
-    ## 2 Low             0.957
-    ## 3 Middle          0.894
+    ##    variacne
+    ## 1 0.9842728
 
 ``` r
 leveneTest(HAPPY_REV~HOUSE_INCOME, clean_data)
@@ -497,3 +499,459 @@ leveneTest(HAPPY_REV~HOUSE_INCOME, clean_data)
     ##       7279                      
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Life satisfaction ANOVA
+
+``` r
+mod<-MANOVA(clean_data, dv = "Life_satisfaction", between = c("SEX", "HOUSE_INCOME")) 
+```
+
+    ## 
+    ## ====== ANOVA (Between-Subjects Design) ======
+    ## 
+    ## Descriptives:
+    ## ─────────────────────────────────────────
+    ##   "SEX" "HOUSE_INCOME"  Mean    S.D.    n
+    ## ─────────────────────────────────────────
+    ##  Female         High   3.606 (0.928)  103
+    ##  Female         Low    2.983 (0.973) 2819
+    ##  Female         Middle 3.331 (0.926)  827
+    ##  Male           High   3.727 (0.880)  252
+    ##  Male           Low    2.890 (0.983) 2151
+    ##  Male           Middle 3.379 (0.960) 1130
+    ## ─────────────────────────────────────────
+    ## Total sample size: N = 7282
+    ## 
+    ## ANOVA Table:
+    ## Dependent variable(s):      Life_satisfaction
+    ## Between-subjects factor(s): SEX, HOUSE_INCOME
+    ## Within-subjects factor(s):  –
+    ## Covariate(s):               –
+    ## ─────────────────────────────────────────────────────────────────────────────────────
+    ##                          MS   MSE df1  df2       F     p     η²p [90% CI of η²p]  η²G
+    ## ─────────────────────────────────────────────────────────────────────────────────────
+    ## SEX                   0.351 0.931   1 7276   0.377  .539       .000 [.000, .001] .000
+    ## HOUSE_INCOME        172.478 0.931   2 7276 185.186 <.001 ***   .048 [.041, .057] .048
+    ## SEX * HOUSE_INCOME    4.460 0.931   2 7276   4.789  .008 **    .001 [.000, .003] .001
+    ## ─────────────────────────────────────────────────────────────────────────────────────
+    ## MSE = mean square error (the residual variance of the linear model)
+    ## η²p = partial eta-squared = SS / (SS + SSE) = F * df1 / (F * df1 + df2)
+    ## ω²p = partial omega-squared = (F - 1) * df1 / (F * df1 + df2 + 1)
+    ## η²G = generalized eta-squared (see Olejnik & Algina, 2003)
+    ## Cohen’s f² = η²p / (1 - η²p)
+    ## 
+    ## Levene’s Test for Homogeneity of Variance:
+    ## ────────────────────────────────────────────────────
+    ##                        Levene’s F df1  df2     p    
+    ## ────────────────────────────────────────────────────
+    ## DV: Life_satisfaction       3.006   5 7276  .010 *  
+    ## ────────────────────────────────────────────────────
+
+``` r
+EMMEANS(mod, effect = "SEX", by = "HOUSE_INCOME", p.adjust = "none")
+```
+
+    ## ------ EMMEANS (effect = "SEX") ------
+    ## 
+    ## Joint Tests of "SEX":
+    ## ────────────────────────────────────────────────────────────────────
+    ##  Effect "HOUSE_INCOME" df1  df2      F     p     η²p [90% CI of η²p]
+    ## ────────────────────────────────────────────────────────────────────
+    ##     SEX         High     1 7276  1.152  .283       .000 [.000, .001]
+    ##     SEX         Low      1 7276 11.266 <.001 ***   .002 [.000, .003]
+    ##     SEX         Middle   1 7276  1.178  .278       .000 [.000, .001]
+    ## ────────────────────────────────────────────────────────────────────
+    ## Note. Simple effects of repeated measures with 3 or more levels
+    ## are different from the results obtained with SPSS MANOVA syntax.
+    ## 
+    ## Estimated Marginal Means of "SEX":
+    ## ────────────────────────────────────────────────────
+    ##   "SEX" "HOUSE_INCOME" Mean [95% CI of Mean]    S.E.
+    ## ────────────────────────────────────────────────────
+    ##  Female         High    3.606 [3.419, 3.792] (0.095)
+    ##  Male           High    3.727 [3.608, 3.846] (0.061)
+    ##  Female         Low     2.983 [2.947, 3.019] (0.018)
+    ##  Male           Low     2.890 [2.850, 2.931] (0.021)
+    ##  Female         Middle  3.331 [3.265, 3.397] (0.034)
+    ##  Male           Middle  3.379 [3.322, 3.435] (0.029)
+    ## ────────────────────────────────────────────────────
+    ## 
+    ## Pairwise Comparisons of "SEX":
+    ## ────────────────────────────────────────────────────────────────────────────────────────────
+    ##       Contrast "HOUSE_INCOME" Estimate    S.E.   df      t     p     Cohen’s d [95% CI of d]
+    ## ────────────────────────────────────────────────────────────────────────────────────────────
+    ##  Male - Female         High      0.121 (0.113) 7276  1.073  .283      0.126 [-0.104,  0.355]
+    ##  Male - Female         Low      -0.093 (0.028) 7276 -3.356 <.001 *** -0.096 [-0.152, -0.040]
+    ##  Male - Female         Middle    0.048 (0.044) 7276  1.085  .278      0.050 [-0.040,  0.139]
+    ## ────────────────────────────────────────────────────────────────────────────────────────────
+    ## Pooled SD for computing Cohen’s d: 0.965
+    ## 
+    ## Disclaimer:
+    ## By default, pooled SD is Root Mean Square Error (RMSE).
+    ## There is much disagreement on how to compute Cohen’s d.
+    ## You are completely responsible for setting `sd.pooled`.
+    ## You might also use `effectsize::t_to_d()` to compute d.
+
+``` r
+EMMEANS(mod, effect = "HOUSE_INCOME", by = "SEX", p.adjust = "none")
+```
+
+    ## ------ EMMEANS (effect = "HOUSE_INCOME") ------
+    ## 
+    ## Joint Tests of "HOUSE_INCOME":
+    ## ───────────────────────────────────────────────────────────────────
+    ##        Effect  "SEX" df1  df2       F     p     η²p [90% CI of η²p]
+    ## ───────────────────────────────────────────────────────────────────
+    ##  HOUSE_INCOME Female   2 7276  57.408 <.001 ***   .016 [.011, .020]
+    ##  HOUSE_INCOME Male     2 7276 150.988 <.001 ***   .040 [.033, .047]
+    ## ───────────────────────────────────────────────────────────────────
+    ## Note. Simple effects of repeated measures with 3 or more levels
+    ## are different from the results obtained with SPSS MANOVA syntax.
+    ## 
+    ## Estimated Marginal Means of "HOUSE_INCOME":
+    ## ────────────────────────────────────────────────────
+    ##  "HOUSE_INCOME"  "SEX" Mean [95% CI of Mean]    S.E.
+    ## ────────────────────────────────────────────────────
+    ##          High   Female  3.606 [3.419, 3.792] (0.095)
+    ##          Low    Female  2.983 [2.947, 3.019] (0.018)
+    ##          Middle Female  3.331 [3.265, 3.397] (0.034)
+    ##          High   Male    3.727 [3.608, 3.846] (0.061)
+    ##          Low    Male    2.890 [2.850, 2.931] (0.021)
+    ##          Middle Male    3.379 [3.322, 3.435] (0.029)
+    ## ────────────────────────────────────────────────────
+    ## 
+    ## Pairwise Comparisons of "HOUSE_INCOME":
+    ## ─────────────────────────────────────────────────────────────────────────────────────
+    ##       Contrast  "SEX" Estimate    S.E.   df       t     p     Cohen’s d [95% CI of d]
+    ## ─────────────────────────────────────────────────────────────────────────────────────
+    ##  Low - High    Female   -0.623 (0.097) 7276  -6.432 <.001 *** -0.645 [-0.842, -0.449]
+    ##  Middle - High Female   -0.275 (0.101) 7276  -2.727  .006 **  -0.285 [-0.490, -0.080]
+    ##  Middle - Low  Female    0.348 (0.038) 7276   9.111 <.001 ***  0.360 [ 0.283,  0.438]
+    ##  Low - High    Male     -0.837 (0.064) 7276 -13.020 <.001 *** -0.867 [-0.997, -0.736]
+    ##  Middle - High Male     -0.348 (0.067) 7276  -5.179 <.001 *** -0.361 [-0.497, -0.224]
+    ##  Middle - Low  Male      0.488 (0.035) 7276  13.774 <.001 ***  0.506 [ 0.434,  0.578]
+    ## ─────────────────────────────────────────────────────────────────────────────────────
+    ## Pooled SD for computing Cohen’s d: 0.965
+    ## 
+    ## Disclaimer:
+    ## By default, pooled SD is Root Mean Square Error (RMSE).
+    ## There is much disagreement on how to compute Cohen’s d.
+    ## You are completely responsible for setting `sd.pooled`.
+    ## You might also use `effectsize::t_to_d()` to compute d.
+
+Loneliness
+
+``` r
+mod<-MANOVA(clean_data, dv = "Lonely", between = c("SEX", "HOUSE_INCOME")) 
+```
+
+    ## 
+    ## ====== ANOVA (Between-Subjects Design) ======
+    ## 
+    ## Descriptives:
+    ## ─────────────────────────────────────────
+    ##   "SEX" "HOUSE_INCOME"  Mean    S.D.    n
+    ## ─────────────────────────────────────────
+    ##  Female         High   1.654 (0.607)  103
+    ##  Female         Low    1.888 (0.636) 2819
+    ##  Female         Middle 1.730 (0.600)  827
+    ##  Male           High   1.484 (0.567)  252
+    ##  Male           Low    1.874 (0.654) 2151
+    ##  Male           Middle 1.604 (0.608) 1130
+    ## ─────────────────────────────────────────
+    ## Total sample size: N = 7282
+    ## 
+    ## ANOVA Table:
+    ## Dependent variable(s):      Lonely
+    ## Between-subjects factor(s): SEX, HOUSE_INCOME
+    ## Within-subjects factor(s):  –
+    ## Covariate(s):               –
+    ## ────────────────────────────────────────────────────────────────────────────────────
+    ##                         MS   MSE df1  df2       F     p     η²p [90% CI of η²p]  η²G
+    ## ────────────────────────────────────────────────────────────────────────────────────
+    ## SEX                  5.780 0.397   1 7276  14.551 <.001 ***   .002 [.001, .004] .002
+    ## HOUSE_INCOME        40.505 0.397   2 7276 101.975 <.001 ***   .027 [.021, .034] .027
+    ## SEX * HOUSE_INCOME   2.722 0.397   2 7276   6.853  .001 **    .002 [.000, .004] .002
+    ## ────────────────────────────────────────────────────────────────────────────────────
+    ## MSE = mean square error (the residual variance of the linear model)
+    ## η²p = partial eta-squared = SS / (SS + SSE) = F * df1 / (F * df1 + df2)
+    ## ω²p = partial omega-squared = (F - 1) * df1 / (F * df1 + df2 + 1)
+    ## η²G = generalized eta-squared (see Olejnik & Algina, 2003)
+    ## Cohen’s f² = η²p / (1 - η²p)
+    ## 
+    ## Levene’s Test for Homogeneity of Variance:
+    ## ─────────────────────────────────────────
+    ##             Levene’s F df1  df2     p    
+    ## ─────────────────────────────────────────
+    ## DV: Lonely       5.365   5 7276 <.001 ***
+    ## ─────────────────────────────────────────
+
+``` r
+EMMEANS(mod, effect = "SEX", by = "HOUSE_INCOME", p.adjust = "none")
+```
+
+    ## ------ EMMEANS (effect = "SEX") ------
+    ## 
+    ## Joint Tests of "SEX":
+    ## ────────────────────────────────────────────────────────────────────
+    ##  Effect "HOUSE_INCOME" df1  df2      F     p     η²p [90% CI of η²p]
+    ## ────────────────────────────────────────────────────────────────────
+    ##     SEX         High     1 7276  5.294  .021 *     .001 [.000, .002]
+    ##     SEX         Low      1 7276  0.573  .449       .000 [.000, .001]
+    ##     SEX         Middle   1 7276 19.210 <.001 ***   .003 [.001, .005]
+    ## ────────────────────────────────────────────────────────────────────
+    ## Note. Simple effects of repeated measures with 3 or more levels
+    ## are different from the results obtained with SPSS MANOVA syntax.
+    ## 
+    ## Estimated Marginal Means of "SEX":
+    ## ────────────────────────────────────────────────────
+    ##   "SEX" "HOUSE_INCOME" Mean [95% CI of Mean]    S.E.
+    ## ────────────────────────────────────────────────────
+    ##  Female         High    1.654 [1.532, 1.775] (0.062)
+    ##  Male           High    1.484 [1.406, 1.562] (0.040)
+    ##  Female         Low     1.888 [1.865, 1.911] (0.012)
+    ##  Male           Low     1.874 [1.848, 1.901] (0.014)
+    ##  Female         Middle  1.730 [1.687, 1.773] (0.022)
+    ##  Male           Middle  1.604 [1.567, 1.640] (0.019)
+    ## ────────────────────────────────────────────────────
+    ## 
+    ## Pairwise Comparisons of "SEX":
+    ## ────────────────────────────────────────────────────────────────────────────────────────────
+    ##       Contrast "HOUSE_INCOME" Estimate    S.E.   df      t     p     Cohen’s d [95% CI of d]
+    ## ────────────────────────────────────────────────────────────────────────────────────────────
+    ##  Male - Female         High     -0.170 (0.074) 7276 -2.301  .021 *   -0.269 [-0.498, -0.040]
+    ##  Male - Female         Low      -0.014 (0.018) 7276 -0.757  .449     -0.022 [-0.078,  0.034]
+    ##  Male - Female         Middle   -0.126 (0.029) 7276 -4.383 <.001 *** -0.201 [-0.290, -0.111]
+    ## ────────────────────────────────────────────────────────────────────────────────────────────
+    ## Pooled SD for computing Cohen’s d: 0.630
+    ## 
+    ## Disclaimer:
+    ## By default, pooled SD is Root Mean Square Error (RMSE).
+    ## There is much disagreement on how to compute Cohen’s d.
+    ## You are completely responsible for setting `sd.pooled`.
+    ## You might also use `effectsize::t_to_d()` to compute d.
+
+``` r
+EMMEANS(mod, effect = "HOUSE_INCOME", by = "SEX", p.adjust = "none")
+```
+
+    ## ------ EMMEANS (effect = "HOUSE_INCOME") ------
+    ## 
+    ## Joint Tests of "HOUSE_INCOME":
+    ## ──────────────────────────────────────────────────────────────────
+    ##        Effect  "SEX" df1  df2      F     p     η²p [90% CI of η²p]
+    ## ──────────────────────────────────────────────────────────────────
+    ##  HOUSE_INCOME Female   2 7276 25.113 <.001 ***   .007 [.004, .010]
+    ##  HOUSE_INCOME Male     2 7276 94.447 <.001 ***   .025 [.020, .031]
+    ## ──────────────────────────────────────────────────────────────────
+    ## Note. Simple effects of repeated measures with 3 or more levels
+    ## are different from the results obtained with SPSS MANOVA syntax.
+    ## 
+    ## Estimated Marginal Means of "HOUSE_INCOME":
+    ## ────────────────────────────────────────────────────
+    ##  "HOUSE_INCOME"  "SEX" Mean [95% CI of Mean]    S.E.
+    ## ────────────────────────────────────────────────────
+    ##          High   Female  1.654 [1.532, 1.775] (0.062)
+    ##          Low    Female  1.888 [1.865, 1.911] (0.012)
+    ##          Middle Female  1.730 [1.687, 1.773] (0.022)
+    ##          High   Male    1.484 [1.406, 1.562] (0.040)
+    ##          Low    Male    1.874 [1.848, 1.901] (0.014)
+    ##          Middle Male    1.604 [1.567, 1.640] (0.019)
+    ## ────────────────────────────────────────────────────
+    ## 
+    ## Pairwise Comparisons of "HOUSE_INCOME":
+    ## ─────────────────────────────────────────────────────────────────────────────────────
+    ##       Contrast  "SEX" Estimate    S.E.   df       t     p     Cohen’s d [95% CI of d]
+    ## ─────────────────────────────────────────────────────────────────────────────────────
+    ##  Low - High    Female    0.234 (0.063) 7276   3.708 <.001 ***  0.372 [ 0.175,  0.569]
+    ##  Middle - High Female    0.076 (0.066) 7276   1.158  .247      0.121 [-0.084,  0.326]
+    ##  Middle - Low  Female   -0.158 (0.025) 7276  -6.347 <.001 *** -0.251 [-0.329, -0.173]
+    ##  Low - High    Male      0.390 (0.042) 7276   9.302 <.001 ***  0.619 [ 0.489,  0.750]
+    ##  Middle - High Male      0.119 (0.044) 7276   2.720  .007 **   0.189 [ 0.053,  0.326]
+    ##  Middle - Low  Male     -0.271 (0.023) 7276 -11.701 <.001 *** -0.430 [-0.502, -0.358]
+    ## ─────────────────────────────────────────────────────────────────────────────────────
+    ## Pooled SD for computing Cohen’s d: 0.630
+    ## 
+    ## Disclaimer:
+    ## By default, pooled SD is Root Mean Square Error (RMSE).
+    ## There is much disagreement on how to compute Cohen’s d.
+    ## You are completely responsible for setting `sd.pooled`.
+    ## You might also use `effectsize::t_to_d()` to compute d.
+
+Graphs
+
+``` r
+plot<-summarySE(clean_data, measurevar="Life_satisfaction", groupvars=c("SEX", "HOUSE_INCOME")) #to get mean scores before putting into 
+ggplot(plot, aes(x = SEX, y = Life_satisfaction, fill = SEX)) +
+  geom_col() + facet_wrap(~ HOUSE_INCOME) + theme_bruce()
+```
+
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+``` r
+plot2<-summarySE(clean_data, measurevar="Lonely", groupvars=c("SEX", "HOUSE_INCOME"))
+ggplot(plot2, aes(x = SEX, y = Lonely, fill = SEX)) +
+  geom_col() + facet_wrap(~ HOUSE_INCOME) + theme_bruce()
+```
+
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-13-2.png)<!-- -->
+
+``` r
+clean_data$HHINC_n<-as.numeric(clean_data$HHINC)
+
+PROCESS(clean_data, y = "Life_satisfaction", x = "HHINC_n", mods = c("SEX"))
+```
+
+    ## 
+    ## ****************** PART 1. Regression Model Summary ******************
+    ## 
+    ## PROCESS Model Code : 1 (Hayes, 2018; www.guilford.com/p/hayes3)
+    ## PROCESS Model Type : Simple Moderation
+    ## -    Outcome (Y) : Life_satisfaction
+    ## -  Predictor (X) : HHINC_n
+    ## -  Mediators (M) : -
+    ## - Moderators (W) : SEX
+    ## - Covariates (C) : -
+    ## -   HLM Clusters : -
+    ## 
+    ## All numeric predictors have been grand-mean centered.
+    ## (For details, please see the help page of PROCESS.)
+    ## 
+    ## Formula of Outcome:
+    ## -    Life_satisfaction ~ HHINC_n*SEX
+    ## 
+    ## CAUTION:
+    ##   Fixed effect (coef.) of a predictor involved in an interaction
+    ##   denotes its "simple effect/slope" at the other predictor = 0.
+    ##   Only when all predictors in an interaction are mean-centered
+    ##   can the fixed effect denote the "main effect"!
+    ##   
+    ## Model Summary
+    ## 
+    ## ─────────────────────────────────────────────────────────────
+    ##                  (1) Life_satisfaction  (2) Life_satisfaction
+    ## ─────────────────────────────────────────────────────────────
+    ## (Intercept)         3.091 ***              3.116 ***         
+    ##                    (0.011)                (0.016)            
+    ## HHINC_n             0.088 ***              0.075 ***         
+    ##                    (0.004)                (0.006)            
+    ## SEXMale                                   -0.067 **          
+    ##                                           (0.023)            
+    ## HHINC_n:SEXMale                            0.027 ***         
+    ##                                           (0.008)            
+    ## ─────────────────────────────────────────────────────────────
+    ## R^2                 0.068                  0.071             
+    ## Adj. R^2            0.068                  0.070             
+    ## Num. obs.        7282                   7282                 
+    ## ─────────────────────────────────────────────────────────────
+    ## Note. * p < .05, ** p < .01, *** p < .001.
+    ## 
+    ## ************ PART 2. Mediation/Moderation Effect Estimate ************
+    ## 
+    ## Package Use : ‘interactions’ (v1.2.0)
+    ## Effect Type : Simple Moderation (Model 1)
+    ## Sample Size : 7282
+    ## Random Seed : -
+    ## Simulations : -
+    ## 
+    ## Interaction Effect on "Life_satisfaction" (Y)
+    ## ───────────────────────────────────────
+    ##                    F df1  df2     p    
+    ## ───────────────────────────────────────
+    ## HHINC_n * SEX  12.16   1 7278 <.001 ***
+    ## ───────────────────────────────────────
+    ## 
+    ## Simple Slopes: "HHINC_n" (X) ==> "Life_satisfaction" (Y)
+    ## ──────────────────────────────────────────────────────
+    ##  "SEX"  Effect    S.E.      t     p           [95% CI]
+    ## ──────────────────────────────────────────────────────
+    ##  Female  0.075 (0.006) 12.619 <.001 *** [0.063, 0.087]
+    ##  Male    0.102 (0.005) 19.843 <.001 *** [0.092, 0.112]
+    ## ──────────────────────────────────────────────────────
+
+``` r
+ggplot(clean_data, aes(x = HHINC_n, y = Life_satisfaction)) + geom_point() + geom_smooth() + theme_bruce() +facet_wrap("SEX")
+```
+
+    ## `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
+
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+``` r
+PROCESS(clean_data, y = "Lonely", x = "HHINC_n", mods = c("SEX"))
+```
+
+    ## 
+    ## ****************** PART 1. Regression Model Summary ******************
+    ## 
+    ## PROCESS Model Code : 1 (Hayes, 2018; www.guilford.com/p/hayes3)
+    ## PROCESS Model Type : Simple Moderation
+    ## -    Outcome (Y) : Lonely
+    ## -  Predictor (X) : HHINC_n
+    ## -  Mediators (M) : -
+    ## - Moderators (W) : SEX
+    ## - Covariates (C) : -
+    ## -   HLM Clusters : -
+    ## 
+    ## All numeric predictors have been grand-mean centered.
+    ## (For details, please see the help page of PROCESS.)
+    ## 
+    ## Formula of Outcome:
+    ## -    Lonely ~ HHINC_n*SEX
+    ## 
+    ## CAUTION:
+    ##   Fixed effect (coef.) of a predictor involved in an interaction
+    ##   denotes its "simple effect/slope" at the other predictor = 0.
+    ##   Only when all predictors in an interaction are mean-centered
+    ##   can the fixed effect denote the "main effect"!
+    ##   
+    ## Model Summary
+    ## 
+    ## ───────────────────────────────────────────
+    ##                  (1) Lonely    (2) Lonely  
+    ## ───────────────────────────────────────────
+    ## (Intercept)         1.805 ***     1.829 ***
+    ##                    (0.007)       (0.010)   
+    ## HHINC_n            -0.047 ***    -0.034 ***
+    ##                    (0.003)       (0.004)   
+    ## SEXMale                          -0.039 ** 
+    ##                                  (0.015)   
+    ## HHINC_n:SEXMale                  -0.021 ***
+    ##                                  (0.005)   
+    ## ───────────────────────────────────────────
+    ## R^2                 0.045         0.048    
+    ## Adj. R^2            0.045         0.048    
+    ## Num. obs.        7282          7282        
+    ## ───────────────────────────────────────────
+    ## Note. * p < .05, ** p < .01, *** p < .001.
+    ## 
+    ## ************ PART 2. Mediation/Moderation Effect Estimate ************
+    ## 
+    ## Package Use : ‘interactions’ (v1.2.0)
+    ## Effect Type : Simple Moderation (Model 1)
+    ## Sample Size : 7282
+    ## Random Seed : -
+    ## Simulations : -
+    ## 
+    ## Interaction Effect on "Lonely" (Y)
+    ## ───────────────────────────────────────
+    ##                    F df1  df2     p    
+    ## ───────────────────────────────────────
+    ## HHINC_n * SEX  16.21   1 7278 <.001 ***
+    ## ───────────────────────────────────────
+    ## 
+    ## Simple Slopes: "HHINC_n" (X) ==> "Lonely" (Y)
+    ## ─────────────────────────────────────────────────────────
+    ##  "SEX"  Effect    S.E.       t     p             [95% CI]
+    ## ─────────────────────────────────────────────────────────
+    ##  Female -0.034 (0.004)  -8.628 <.001 *** [-0.041, -0.026]
+    ##  Male   -0.054 (0.003) -16.071 <.001 *** [-0.061, -0.048]
+    ## ─────────────────────────────────────────────────────────
+
+``` r
+ggplot(clean_data, aes(x = HHINC_n, y = Lonely)) + geom_point() + geom_smooth() + theme_bruce() +facet_wrap("SEX")
+```
+
+    ## `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
+
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-14-2.png)<!-- -->

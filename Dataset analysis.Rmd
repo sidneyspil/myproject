@@ -18,6 +18,7 @@ library(ggplot2)
 library(psych)
 library(bruceR)
 library(haven) #load CSV
+library(Rmisc)
 
 #install.packages("nortest")
 
@@ -66,7 +67,7 @@ clean_data <- clean_data %>%
 clean_data$HAPPY_REV <- 5 - clean_data$HAPPY #reverse code happy so higher number = happier
 
 clean_data <- clean_data %>%
-  select(SEX,HOUSE_INCOME,HAPPY_meaning, HAPPY_REV,Life_satisfaction, SAT1,SAT2,SAT3,SAT4,SAT5,Lonely, LONELY_A,LONELY_B,LONELY_C)
+  select(SEX,HOUSE_INCOME,HHINC,HAPPY_meaning, HAPPY_REV,Life_satisfaction, SAT1,SAT2,SAT3,SAT4,SAT5,Lonely, LONELY_A,LONELY_B,LONELY_C)
 
 clean_data<- drop_na(clean_data)
 clean_data <- clean_data %>% filter(SEX != "Other")
@@ -174,6 +175,45 @@ clean_data %>%
 
 leveneTest(HAPPY_REV~HOUSE_INCOME, clean_data)
 ```
+Life satisfaction ANOVA
+```{r}
+mod<-MANOVA(clean_data, dv = "Life_satisfaction", between = c("SEX", "HOUSE_INCOME")) 
+
+EMMEANS(mod, effect = "SEX", by = "HOUSE_INCOME", p.adjust = "none")
+
+EMMEANS(mod, effect = "HOUSE_INCOME", by = "SEX", p.adjust = "none")
+```
+Loneliness
+```{r}
+mod<-MANOVA(clean_data, dv = "Lonely", between = c("SEX", "HOUSE_INCOME")) 
+
+EMMEANS(mod, effect = "SEX", by = "HOUSE_INCOME", p.adjust = "none")
+
+EMMEANS(mod, effect = "HOUSE_INCOME", by = "SEX", p.adjust = "none")
+```
+Graphs
+```{r}
+
+plot<-summarySE(clean_data, measurevar="Life_satisfaction", groupvars=c("SEX", "HOUSE_INCOME")) #to get mean scores before putting into 
+ggplot(plot, aes(x = SEX, y = Life_satisfaction, fill = SEX)) +
+  geom_col() + facet_wrap(~ HOUSE_INCOME) + theme_bruce()
+
+plot2<-summarySE(clean_data, measurevar="Lonely", groupvars=c("SEX", "HOUSE_INCOME"))
+ggplot(plot2, aes(x = SEX, y = Lonely, fill = SEX)) +
+  geom_col() + facet_wrap(~ HOUSE_INCOME) + theme_bruce()
+
+```
+```{r}
+clean_data$HHINC_n<-as.numeric(clean_data$HHINC)
+
+PROCESS(clean_data, y = "Life_satisfaction", x = "HHINC_n", mods = c("SEX"))
+ggplot(clean_data, aes(x = HHINC_n, y = Life_satisfaction)) + geom_point() + geom_smooth() + theme_bruce() +facet_wrap("SEX")
+
+PROCESS(clean_data, y = "Lonely", x = "HHINC_n", mods = c("SEX"))
+ggplot(clean_data, aes(x = HHINC_n, y = Lonely)) + geom_point() + geom_smooth() + theme_bruce() +facet_wrap("SEX")
+
+```
+
 
 
 
