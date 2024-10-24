@@ -202,6 +202,14 @@ plot2<-summarySE(clean_data, measurevar="Lonely", groupvars=c("SEX", "HOUSE_INCO
 ggplot(plot2, aes(x = SEX, y = Lonely, fill = SEX)) +
   geom_col() + facet_wrap(~ HOUSE_INCOME) + theme_bruce()
 
+#plot3<-summarySE(clean_data, measurevar="Lonely", groupvars=c("SEX", "HOUSE_INCOME"))
+
+ggplot(plot, aes(x = HOUSE_INCOME, y = Life_satisfaction, fill = HOUSE_INCOME)) +
+  geom_col() + facet_wrap(~ SEX) + theme_bruce()
+
+ggplot(plot2, aes(x = HOUSE_INCOME, y = Lonely, fill = HOUSE_INCOME)) +
+  geom_col() + facet_wrap(~ SEX) + theme_bruce()
+
 ```
 ```{r}
 clean_data$HHINC_n<-as.numeric(clean_data$HHINC)
