@@ -797,6 +797,22 @@ ggplot(plot2, aes(x = SEX, y = Lonely, fill = SEX)) +
 ![](Dataset-analysis_files/figure-gfm/unnamed-chunk-13-2.png)<!-- -->
 
 ``` r
+#plot3<-summarySE(clean_data, measurevar="Lonely", groupvars=c("SEX", "HOUSE_INCOME"))
+
+ggplot(plot, aes(x = HOUSE_INCOME, y = Life_satisfaction, fill = HOUSE_INCOME)) +
+  geom_col() + facet_wrap(~ SEX) + theme_bruce()
+```
+
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-13-3.png)<!-- -->
+
+``` r
+ggplot(plot2, aes(x = HOUSE_INCOME, y = Lonely, fill = HOUSE_INCOME)) +
+  geom_col() + facet_wrap(~ SEX) + theme_bruce()
+```
+
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-13-4.png)<!-- -->
+
+``` r
 clean_data$HHINC_n<-as.numeric(clean_data$HHINC)
 
 PROCESS(clean_data, y = "Life_satisfaction", x = "HHINC_n", mods = c("SEX"))
