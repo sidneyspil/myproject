@@ -19,7 +19,9 @@ library(psych)
 library(bruceR)
 library(haven) #load CSV
 library(Rmisc)
-
+library(tidyverse)
+library(bruceR)
+#library(haven)
 #install.packages("nortest")
 
 #ibrary(nortest)
@@ -221,8 +223,20 @@ PROCESS(clean_data, y = "Lonely", x = "HHINC_n", mods = c("SEX"))
 ggplot(clean_data, aes(x = HHINC_n, y = Lonely)) + geom_point() + geom_smooth() + theme_bruce() +facet_wrap("SEX")
 
 ```
+Reliability and Factor analysis for  Satisfaction with Life
+```{r}
+Alpha(clean_data, "SAT", 1:5) 
 
+EFA(clean_data, "SAT", 1:5, method = "pa", plot.scree = TRUE, nfactors = c("parallel"))
+```
 
+Reliability and Factor analysis for Lonliness
+```{r}
+
+Alpha(clean_data,"LONELY_", c("A","B","C"))
+
+EFA(clean_data, "LONELY_", c("A","B","C"), method = "pa", plot.scree = TRUE, nfactors = c("parallel"))
+```
 
 
 

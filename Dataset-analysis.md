@@ -115,6 +115,54 @@ library(Rmisc)
     ##     summarize
 
 ``` r
+library(tidyverse)
+```
+
+    ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+    ## ✔ forcats   1.0.0     ✔ readr     2.1.5
+    ## ✔ lubridate 1.9.3     ✔ tibble    3.2.1
+    ## ✔ purrr     1.0.2
+
+    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ✖ psych::%+%()          masks ggplot2::%+%()
+    ## ✖ psych::alpha()        masks ggplot2::alpha()
+    ## ✖ plyr::arrange()       masks dplyr::arrange()
+    ## ✖ data.table::between() masks dplyr::between()
+    ## ✖ purrr::compact()      masks plyr::compact()
+    ## ✖ plyr::count()         masks dplyr::count()
+    ## ✖ plyr::desc()          masks dplyr::desc()
+    ## ✖ Matrix::expand()      masks tidyr::expand()
+    ## ✖ plyr::failwith()      masks dplyr::failwith()
+    ## ✖ dplyr::filter()       masks stats::filter()
+    ## ✖ data.table::first()   masks dplyr::first()
+    ## ✖ lubridate::hour()     masks data.table::hour()
+    ## ✖ plyr::id()            masks dplyr::id()
+    ## ✖ lubridate::isoweek()  masks data.table::isoweek()
+    ## ✖ dplyr::lag()          masks stats::lag()
+    ## ✖ data.table::last()    masks dplyr::last()
+    ## ✖ lubridate::mday()     masks data.table::mday()
+    ## ✖ lubridate::minute()   masks data.table::minute()
+    ## ✖ lubridate::month()    masks data.table::month()
+    ## ✖ plyr::mutate()        masks dplyr::mutate()
+    ## ✖ Matrix::pack()        masks tidyr::pack()
+    ## ✖ lubridate::quarter()  masks data.table::quarter()
+    ## ✖ dplyr::recode()       masks car::recode()
+    ## ✖ plyr::rename()        masks dplyr::rename()
+    ## ✖ lubridate::second()   masks data.table::second()
+    ## ✖ purrr::some()         masks car::some()
+    ## ✖ plyr::summarise()     masks dplyr::summarise()
+    ## ✖ plyr::summarize()     masks dplyr::summarize()
+    ## ✖ purrr::transpose()    masks data.table::transpose()
+    ## ✖ Matrix::unpack()      masks tidyr::unpack()
+    ## ✖ lubridate::wday()     masks data.table::wday()
+    ## ✖ lubridate::week()     masks data.table::week()
+    ## ✖ lubridate::yday()     masks data.table::yday()
+    ## ✖ lubridate::year()     masks data.table::year()
+    ## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+
+``` r
+library(bruceR)
+#library(haven)
 #install.packages("nortest")
 
 #ibrary(nortest)
@@ -971,3 +1019,158 @@ ggplot(clean_data, aes(x = HHINC_n, y = Lonely)) + geom_point() + geom_smooth() 
     ## `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
 
 ![](Dataset-analysis_files/figure-gfm/unnamed-chunk-14-2.png)<!-- -->
+Reliability and Factor analysis for Satisfaction with Life
+
+``` r
+Alpha(clean_data, "SAT", 1:5) 
+```
+
+    ## 
+    ## Reliability Analysis
+    ## 
+    ## Summary:
+    ## Total Items: 5
+    ## Scale Range: 1 ~ 5
+    ## Total Cases: 7282
+    ## Valid Cases: 7282 (100.0%)
+    ## 
+    ## Scale Statistics:
+    ## Mean = 3.091
+    ## S.D. = 0.992
+    ## Cronbach’s α = 0.865
+    ## McDonald’s ω = 0.871
+    ## 
+    ## Item Statistics (Cronbach’s α If Item Deleted):
+    ## ───────────────────────────────────────────────
+    ##        Mean    S.D. Item-Rest Cor. Cronbach’s α
+    ## ───────────────────────────────────────────────
+    ## SAT1  3.038 (1.188)          0.735        0.824
+    ## SAT2  3.035 (1.188)          0.735        0.824
+    ## SAT3  3.277 (1.239)          0.777        0.813
+    ## SAT4  3.375 (1.212)          0.661        0.842
+    ## SAT5  2.731 (1.327)          0.540        0.875
+    ## ───────────────────────────────────────────────
+    ## Item-Rest Cor. = Corrected Item-Total Correlation
+
+``` r
+EFA(clean_data, "SAT", 1:5, method = "pa", plot.scree = TRUE, nfactors = c("parallel"))
+```
+
+    ## 
+    ## Explanatory Factor Analysis
+    ## 
+    ## Summary:
+    ## Total Items: 5
+    ## Scale Range: 1 ~ 5
+    ## Total Cases: 7282
+    ## Valid Cases: 7282 (100.0%)
+    ## 
+    ## Extraction Method:
+    ## - Principal Axis Factor Analysis
+    ## Rotation Method:
+    ## - (Only one component was extracted. The solution was not rotated.)
+    ## 
+    ## KMO and Bartlett's Test:
+    ## - Kaiser-Meyer-Olkin (KMO) Measure of Sampling Adequacy: MSA = 0.861
+    ## - Bartlett's Test of Sphericity: Approx. χ²(10) = 17602.85, p < 1e-99 ***
+    ## 
+    ## Total Variance Explained:
+    ## ───────────────────────────────────────────────────────────────────────────────
+    ##           Eigenvalue Variance % Cumulative % SS Loading Variance % Cumulative %
+    ## ───────────────────────────────────────────────────────────────────────────────
+    ## Factor 1       3.285     65.709       65.709      2.895     57.895       57.895
+    ## Factor 2       0.632     12.645       78.354                                   
+    ## Factor 3       0.488      9.770       88.124                                   
+    ## Factor 4       0.316      6.328       94.452                                   
+    ## Factor 5       0.277      5.548      100.000                                   
+    ## ───────────────────────────────────────────────────────────────────────────────
+    ## 
+    ## Factor Loadings (Sorted by Size):
+    ## ───────────────────────
+    ##         PA1 Communality
+    ## ───────────────────────
+    ## SAT3  0.861       0.741
+    ## SAT2  0.812       0.660
+    ## SAT1  0.810       0.656
+    ## SAT4  0.712       0.507
+    ## SAT5  0.575       0.330
+    ## ───────────────────────
+    ## Communality = Sum of Squared (SS) Factor Loadings
+    ## (Uniqueness = 1 - Communality)
+
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
+Reliability and Factor analysis for Lonliness
+
+``` r
+Alpha(clean_data,"LONELY_", c("A","B","C"))
+```
+
+    ## 
+    ## Reliability Analysis
+    ## 
+    ## Summary:
+    ## Total Items: 3
+    ## Scale Range: 1 ~ 3
+    ## Total Cases: 7282
+    ## Valid Cases: 7282 (100.0%)
+    ## 
+    ## Scale Statistics:
+    ## Mean = 1.805
+    ## S.D. = 0.642
+    ## Cronbach’s α = 0.819
+    ## McDonald’s ω = 0.826
+    ## 
+    ## Item Statistics (Cronbach’s α If Item Deleted):
+    ## ───────────────────────────────────────────────────
+    ##            Mean    S.D. Item-Rest Cor. Cronbach’s α
+    ## ───────────────────────────────────────────────────
+    ## LONELY_A  1.768 (0.744)          0.581        0.839
+    ## LONELY_B  1.804 (0.737)          0.723        0.699
+    ## LONELY_C  1.842 (0.767)          0.718        0.702
+    ## ───────────────────────────────────────────────────
+    ## Item-Rest Cor. = Corrected Item-Total Correlation
+
+``` r
+EFA(clean_data, "LONELY_", c("A","B","C"), method = "pa", plot.scree = TRUE, nfactors = c("parallel"))
+```
+
+    ## 
+    ## Explanatory Factor Analysis
+    ## 
+    ## Summary:
+    ## Total Items: 3
+    ## Scale Range: 1 ~ 3
+    ## Total Cases: 7282
+    ## Valid Cases: 7282 (100.0%)
+    ## 
+    ## Extraction Method:
+    ## - Principal Axis Factor Analysis
+    ## Rotation Method:
+    ## - (Only one component was extracted. The solution was not rotated.)
+    ## 
+    ## KMO and Bartlett's Test:
+    ## - Kaiser-Meyer-Olkin (KMO) Measure of Sampling Adequacy: MSA = 0.687
+    ## - Bartlett's Test of Sphericity: Approx. χ²(3) = 8403.64, p < 1e-99 ***
+    ## 
+    ## Total Variance Explained:
+    ## ───────────────────────────────────────────────────────────────────────────────
+    ##           Eigenvalue Variance % Cumulative % SS Loading Variance % Cumulative %
+    ## ───────────────────────────────────────────────────────────────────────────────
+    ## Factor 1       2.206     73.546       73.546      1.849     61.632       61.632
+    ## Factor 2       0.518     17.253       90.799                                   
+    ## Factor 3       0.276      9.201      100.000                                   
+    ## ───────────────────────────────────────────────────────────────────────────────
+    ## 
+    ## Factor Loadings (Sorted by Size):
+    ## ───────────────────────────
+    ##             PA1 Communality
+    ## ───────────────────────────
+    ## LONELY_B  0.853       0.727
+    ## LONELY_C  0.848       0.719
+    ## LONELY_A  0.635       0.403
+    ## ───────────────────────────
+    ## Communality = Sum of Squared (SS) Factor Loadings
+    ## (Uniqueness = 1 - Communality)
+
+![](Dataset-analysis_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
