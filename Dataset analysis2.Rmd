@@ -10,10 +10,6 @@ options(repos = c(CRAN = "https://cran.rstudio.com/"))
 ```
 
 ```{r}
-#install.packages("dplyr")
-#install.packages("ggsignif")
-```
-```{r}
 library(car)
 library(dplyr) #recode variables
 library(tidyr)
@@ -142,14 +138,14 @@ leveneTest(Life_satisfaction~HOUSE_INCOME, clean_data)
 Variance of Happiness
 ```{r}
 #clean_data %>%
- # group_by(SEX) %>%
-  #summarize(variacne = var(HAPPY_REV))
+#  group_by(SEX) %>%
+#  summarize(variacne = var(HAPPY_REV))
 
 #leveneTest(HAPPY_REV~SEX, clean_data)
 
 #clean_data %>%
  # group_by(HOUSE_INCOME) %>%
-#  summarize(variacne = var(Life_satisfaction))
+  #summarize(variacne = var(Life_satisfaction))
 
 #leveneTest(HAPPY_REV~HOUSE_INCOME, clean_data)
 ```
@@ -173,14 +169,13 @@ Graphs
 ```{r}
 
 #plot$HOUSE_INCOME <- factor(plot$HOUSE_INCOME, levels = c("Low", "Middle", "High"))
-plot<-summarySE(clean_data, measurevar="Life_satisfaction", groupvars=c("SEX", "HOUSE_INCOME"))
 
 ggplot(plot, aes(x = SEX, y = Life_satisfaction, fill = SEX)) +
   geom_col() + facet_wrap(~ HOUSE_INCOME) + theme_bruce() + labs(x = "Sex", y = "Life Satisfaction",title= "Differences in Life Satisfaction") +guides(fill=FALSE)
 
 #plot2$HOUSE_INCOME <- factor(plot2$HOUSE_INCOME, levels = c("Low", "Middle", "High"))
 
-plot2<-summarySE(clean_data, measurevar="Lonely", groupvars=c("SEX", "HOUSE_INCOME"))
+#plot2<-summarySE(clean_data, measurevar="Lonely", groupvars=c("SEX", "HOUSE_INCOME"))
 ggplot(plot2, aes(x = SEX, y = Lonely, fill = SEX)) +
   geom_col() + facet_wrap(~ HOUSE_INCOME) + theme_bruce() + labs(x = "Sex", y = "Loneliness", title= "Differences in Loneliness" ) + guides(fill=FALSE)
 
@@ -212,5 +207,8 @@ EFA(clean_data, "LONELY_", c("A","B","C"), method = "pa", plot.scree = TRUE, nfa
 ```
 
 
+```{r}
+#rm(list = ls())
+```
 
 
