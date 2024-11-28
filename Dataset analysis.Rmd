@@ -11,6 +11,9 @@ options(repos = c(CRAN = "https://cran.rstudio.com/"))
 
 ```{r}
 #install.packages("dplyr")
+install.packages("ggsignif")
+```
+```{r}
 library(car)
 library(dplyr) #recode variables
 library(tidyr)
@@ -21,11 +24,7 @@ library(haven) #load CSV
 library(Rmisc)
 library(tidyverse)
 library(bruceR)
-#library(haven)
-#install.packages("nortest")
-
-#ibrary(nortest)
-#install.packages("car")
+library(ggsignif)
 ```
 Reading dataset 
 ```{r}
@@ -44,15 +43,15 @@ data <- read.csv("C:/Users/sidne/OneDrive/Desktop/PSY329/Excel-Data.csv")
 Cleaning data set and recoding variables
 ```{r}
 clean_data <- data %>%
-  select(SEX,HHINC,HAPPY,SAT1,SAT2,SAT3,SAT4,SAT5,LONELY_A,LONELY_B,LONELY_C) 
+  select(SEX,HHINC,SAT1,SAT2,SAT3,SAT4,SAT5,LONELY_A,LONELY_B,LONELY_C,RACEREC,AGE) 
 
-clean_data$SEX<-recode(data$SEX, '1' = 'Male', '2' = 'Female', '3'='Other')
+clean_data$SEX<-recode(data$SEX, '1' = 'Men', '2' = 'Women', '3'='Other')
 
 
 
 clean_data$HOUSE_INCOME<-recode(data$HHINC, '1' = 'Low', '2' = 'Low', '3'='Low','4'='Low','5'='Low','6'='Middle','7'='Middle','8'='Middle','9'='Middle','10'='Middle','11'='High','12'='High')
 
-clean_data$HAPPY_meaning<-recode(data$HAPPY, '1' = 'Very happy', '2' = 'Rather happy', '3'='Not very happy','4'='Not at all happy')
+#clean_data$HAPPY_meaning<-recode(data$HAPPY, '1' = 'Very happy', '2' = 'Rather happy', '3'='Not very happy','4'='Not at all happy')
 
 clean_data <- clean_data %>%
    mutate(Lonely=rowMeans(cbind(LONELY_A,LONELY_B,LONELY_C))) #1 hardly ever feel lonely to 5 often feel lonely 
@@ -66,13 +65,14 @@ clean_data <- clean_data %>%
 clean_data <- clean_data %>%
   mutate(Life_satisfaction = ifelse(Life_satisfaction > 5, NA, Life_satisfaction))
 
-clean_data$HAPPY_REV <- 5 - clean_data$HAPPY #reverse code happy so higher number = happier
+#clean_data$HAPPY_REV <- 5 - clean_data$HAPPY #reverse code happy so higher number = happier
 
 clean_data <- clean_data %>%
-  select(SEX,HOUSE_INCOME,HHINC,HAPPY_meaning, HAPPY_REV,Life_satisfaction, SAT1,SAT2,SAT3,SAT4,SAT5,Lonely, LONELY_A,LONELY_B,LONELY_C)
+  select(SEX,HOUSE_INCOME,HHINC,Life_satisfaction, SAT1,SAT2,SAT3,SAT4,SAT5,Lonely, LONELY_A,LONELY_B,LONELY_C,RACEREC,AGE)
 
 clean_data<- drop_na(clean_data)
 clean_data <- clean_data %>% filter(SEX != "Other")
+#summary (clean_data)
 
 write.csv(clean_data, "C:/Users/sidne/OneDrive/Desktop/PSY329/clean_data.csv", row.names = FALSE)
 
@@ -85,14 +85,6 @@ ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.5) + facet_wra
 
 ggplot(clean_data, aes(x = Lonely)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic() #between INCOME
 
-#clean_data %>%
- # group_by(SEX) %>% 
-  #summarize(W = shapiro.test(Lonely)$statistic, p_value = shapiro.test(Lonely)$p.value)
-
-#clean_data %>%
- # group_by(HOUSE_INCOME) %>% 
-  #summarize(W = shapiro.test(Lonely)$statistic, p_value = shapiro.test(Lonely)$p.value)
-
 describeBy(Lonely ~ SEX, data= clean_data)
 describeBy(Lonely ~ HOUSE_INCOME, data= clean_data)
 ```
@@ -102,14 +94,6 @@ Normality of Life satisfaction
 ggplot(clean_data, aes(x = Life_satisfaction)) + geom_histogram(binwidth = 0.5) + facet_wrap(~SEX)+theme_classic()
 
 ggplot(clean_data, aes(x = Life_satisfaction)) + geom_histogram(binwidth = 0.5) + facet_wrap(~HOUSE_INCOME)+theme_classic()
-
-#clean_data %>%
- # group_by(SEX) %>% 
-  #summarize(W = shapiro.test(Life_satisfaction)$statistic, p_value = shapiro.test(Life_satisfaction)$p.value)
-
-#clean_data %>%
- # group_by(HOUSE_INCOME) %>% 
-  #summarize(W = shapiro.test(Life_satisfaction)$statistic, p_value = shapiro.test(Life_satisfaction)$p.value)
 
 describeBy(Life_satisfaction ~ SEX, data= clean_data)
 describeBy(Life_satisfaction ~ HOUSE_INCOME, data= clean_data)
@@ -121,14 +105,6 @@ Normality of Happiness
 ggplot(clean_data, aes(x = HAPPY_REV)) + geom_histogram(binwidth = 1) + facet_wrap(~SEX)+theme_classic()
 
 ggplot(clean_data, aes(x = HAPPY_REV)) + geom_histogram(binwidth = 1) + facet_wrap(~HOUSE_INCOME)+theme_classic()
-
-#clean_data %>%
- # group_by(SEX) %>% 
-  #summarize(W = shapiro.test(HAPPY_REV)$statistic, p_value = shapiro.test(HAPPY_REV)$p.value)
-
-#clean_data %>%
- # group_by(HOUSE_INCOME) %>% 
-  #summarize(W = shapiro.test(HAPPY_REV)$statistic, p_value = shapiro.test(HAPPY_REV)$p.value)
 
 describeBy(HAPPY_REV ~ SEX, data= clean_data)
 describeBy(HAPPY_REV ~ HOUSE_INCOME, data= clean_data)
@@ -196,21 +172,17 @@ EMMEANS(mod, effect = "HOUSE_INCOME", by = "SEX", p.adjust = "none")
 Graphs
 ```{r}
 
-plot<-summarySE(clean_data, measurevar="Life_satisfaction", groupvars=c("SEX", "HOUSE_INCOME")) #to get mean scores before putting into 
+plot$HOUSE_INCOME <- factor(plot$HOUSE_INCOME, levels = c("Low", "Middle", "High"))
+
 ggplot(plot, aes(x = SEX, y = Life_satisfaction, fill = SEX)) +
-  geom_col() + facet_wrap(~ HOUSE_INCOME) + theme_bruce()
+  geom_col() + facet_wrap(~ HOUSE_INCOME) + theme_bruce() + labs(x = "Sex", y = "Life Satisfaction",title= "Differences in Life Satisfaction") +guides(fill=FALSE)
 
-plot2<-summarySE(clean_data, measurevar="Lonely", groupvars=c("SEX", "HOUSE_INCOME"))
+plot2$HOUSE_INCOME <- factor(plot2$HOUSE_INCOME, levels = c("Low", "Middle", "High"))
+
+#plot2<-summarySE(clean_data, measurevar="Lonely", groupvars=c("SEX", "HOUSE_INCOME"))
 ggplot(plot2, aes(x = SEX, y = Lonely, fill = SEX)) +
-  geom_col() + facet_wrap(~ HOUSE_INCOME) + theme_bruce()
+  geom_col() + facet_wrap(~ HOUSE_INCOME) + theme_bruce() + labs(x = "Sex", y = "Loneliness", title= "Differences in Loneliness" ) + guides(fill=FALSE)
 
-#plot3<-summarySE(clean_data, measurevar="Lonely", groupvars=c("SEX", "HOUSE_INCOME"))
-
-ggplot(plot, aes(x = HOUSE_INCOME, y = Life_satisfaction, fill = HOUSE_INCOME)) +
-  geom_col() + facet_wrap(~ SEX) + theme_bruce()
-
-ggplot(plot2, aes(x = HOUSE_INCOME, y = Lonely, fill = HOUSE_INCOME)) +
-  geom_col() + facet_wrap(~ SEX) + theme_bruce()
 
 ```
 ```{r}
