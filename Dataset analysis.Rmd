@@ -1,7 +1,7 @@
 ---
 title: "My Dataset"
 output: "github_document"
-date: "2024-09-26"
+date: "2024-11-28"
 ---
 ```{r}
 # Set a CRAN mirror
@@ -9,10 +9,6 @@ options(repos = c(CRAN = "https://cran.rstudio.com/"))
 
 ```
 
-```{r}
-#install.packages("dplyr")
-install.packages("ggsignif")
-```
 ```{r}
 library(car)
 library(dplyr) #recode variables
